@@ -213,3 +213,13 @@ td.icon {
 	text-decoration: none;
 	cursor: pointer;
 }
+.timeChange, .confirmDelete {
+	display: none;
+}
+.date-picker, .time-picker {
+	width: 95px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+	display: none;
+}
