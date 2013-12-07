@@ -8,7 +8,7 @@ var itinerary =
 			id: "4ace4417f964a5207bcf20e3",
 			start: "10:30 AM",
 			end: "12:00 PM",
-			date: "July 02, 2013",
+			date: "2013-07-02",
 			startDate: "Tue Jul 02 2013 10:30:00 GMT-0400 (Eastern Daylight Time)",
 			endDate: "Tue Jul 02 2013 12:00:00 GMT-0400 (Eastern Daylight Time)"
 		},
@@ -16,7 +16,7 @@ var itinerary =
 			id: "4abe4502f964a520558c20e3",
 			start: "1:00 PM",
 			end: "3:00 PM",
-			date: "July 02, 2013",
+			date: "2013-07-03",
 			startDate: "Tue Jul 02 2013 13:00:00 GMT-0400 (Eastern Daylight Time)",
 			endDate: "Tue Jul 02 2013 15:00:00 GMT-0400 (Eastern Daylight Time)"
 		},

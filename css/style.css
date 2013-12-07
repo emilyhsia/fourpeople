@@ -143,6 +143,13 @@ td.icon {
 	padding-left: 10px;
 }
 
+td.time {
+	width: 400px;
+}
+
+.timeChange {
+}
+
 .mini-map {
 	height: 150px;
 	width: 150px;
@@ -217,7 +224,7 @@ td.icon {
 	display: none;
 }
 .date-picker, .time-picker {
-	width: 95px;
+	/*width: 95px;*/
 }
 
 .no-close .ui-dialog-titlebar-close {

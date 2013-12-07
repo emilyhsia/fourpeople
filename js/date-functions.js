@@ -14,7 +14,8 @@ function getCalendarString(dateString) {
 		day = "0" + day;
 	}
 	
-	return month + "/" + day + "/" + year;
+	
+	return year + "-" + month + "-" + day;
 }
 
 // get string in form of hh:mm PM from date string
