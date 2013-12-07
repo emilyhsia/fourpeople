@@ -30,13 +30,10 @@ function getTimeString(dateString) {
 	} else if(12 < hour && hour < 24) {
 		hour = hour - 12;
 		AMPM = "PM";
-	} else if(hour == 24) {
+	} else if(hour == 0) {
 		hour = 12;
 	}
-	
-	if(hour < 10) {
-		hour = "0" + hour;
-	}
+
 	if(minute < 10) {
 		minute = "0" + minute;
 	}

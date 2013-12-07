@@ -71,6 +71,25 @@
 			<!-- holds any error messages -->
 			<div class="alert alert-danger" id="error-holder"></div>
 			<hr>
+			<div id="add-venue-build-controls">
+				<div class="left two-thirds">
+					<b>Start</b><br>
+					Date: <input type="text" class="date-picker" id="date-picker-start"> &nbsp; &nbsp;
+					Time: <input type="text" class="time-picker" id="time-picker-start" size="10" autocomplete="OFF">
+					<br><br>
+					<b>End</b><br>
+					Date: <input type="text" class="date-picker" id="date-picker-end"> &nbsp; &nbsp;
+					Time: <input type="text" class="time-picker" id="time-picker-end" size="10" autocomplete="OFF">
+				</div>
+				<div class="right one-third">
+					<button class="btn btn-primary btn-sm" id="add-venue-get-build">Add venue</button>
+					<br><br>
+					<button class="btn btn-primary btn-sm" id="cancel-add">Cancel</button>
+				</div>
+				<div style="clear: both;"></div>
+				<div class="alert alert-danger" id="add-venue-error-holder"></div>
+				<hr>
+			</div>
 			<!-- shows loading gif; initially hidden until search is running -->
 			<img src="images/loading.gif" id="loading-image"/>
 			
