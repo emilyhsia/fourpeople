@@ -17,7 +17,7 @@ function initializeFS() {
 /* On initialize file system */
 function onInitFs(fs) {
 	fileSystem = fs;
-	console.log("Sucessfully requested 5MB of persistent file storage; file system: " + fs.name);
+	console.log("Successfully requested 5MB of persistent file storage; file system: " + fs.name);
 	
 	// create or get a file and write to it
 	// four inputs: file name, options, function, and error callback
