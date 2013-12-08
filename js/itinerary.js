@@ -523,22 +523,7 @@ function buildResultPanel(number, name, address, id, category) {
 // Takes the new itinerary, sorts it, and displays everything
 var sortAndDisplayItinerary = function(newVenue) {
 	//sort itinerary first
-<<<<<<< HEAD
 	sortItinerary();
-=======
-	itinerary.itinerary.sort(function(a,b) {
-		var dateA = new Date(a.startDate);
-		var dateB = new Date(b.startDate);
-		
-		if(dateA > dateB) 
-			return 1;
-		if(dateA < dateB)
-			return -1;
-		return 0;
-	});
-
-	
->>>>>>> cc89a2ea41f96dba82fb9d3d2c9c0323fee06e29
 	
 	// clear out table
 	$("#venue-table-tbody").html(" ");
@@ -550,14 +535,13 @@ var sortAndDisplayItinerary = function(newVenue) {
 		$('tbody#venue-table-tbody').append(row);
 		displayVenue(venue);
 	});
-<<<<<<< HEAD
 
 	// highlight the newly added venue and fade out
 	$('#tr-' + newVenue.id).addClass('highlight-venue');
 	setTimeout(function() {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
 	}, 600);
-=======
+
 	detectCollision();
 }
 
@@ -585,7 +569,6 @@ function detectCollision(){
 		}
 
 	}
->>>>>>> cc89a2ea41f96dba82fb9d3d2c9c0323fee06e29
 }
 
 /*

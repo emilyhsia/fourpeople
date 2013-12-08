@@ -139,6 +139,7 @@ td {
 td.icon {
 	width: 130px;
 	border: none!important;
+	border-top: 1px transparent solid!important;
 	position: relative;
 }
 
@@ -283,7 +284,7 @@ td.time {
 #venue-table-tbody {
 	border-collapse: separate;
 }
-#venue-table-tbody tr {
+#venue-table-tbody tr.border {
 	border-top: 1px solid #dddddd;
 }
 
