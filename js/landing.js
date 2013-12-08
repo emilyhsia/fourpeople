@@ -1,5 +1,29 @@
 /** JavaScript functionality for landing page */
 
+// when user clicks create new itinerary, use input
+// as name and create new itinerary
+$("#create-new-itinerary").click(function(){
+	var itineraryName = $("#itinerary-name").val();
+	var itineraryID = nextItineraryID;
+	nextItineraryID++;
+	
+	itineraries.push({
+		name: itineraryName,
+		id: itineraryID,
+		itinerary: []
+	});
+	
+	window.location.href = "itinerary.html?id=" + itineraryID;
+});
+
+// allow user to create new itinerary by pressing enter
+$("#itinerary-name").keypress(function(e){
+	if(e.which == 13) {
+		$("#create-new-itinerary").click();
+	}
+});
+
+
 // when user clicks search for itinerary, check input
 // and redirect accordingly
 $("#search-itinerary-by-id").click(function(){
