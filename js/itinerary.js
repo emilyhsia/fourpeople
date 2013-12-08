@@ -5,6 +5,7 @@ var CLIENT_ID = "5CYXNIKAOPTKCKIGHNPPJ3DQJBY4IPL0XJL140TLN121U514";
 var CLIENT_SECRET = "RPZTJ5NHBY0L213UKWP3T3DF2QVUXNKMW34FRJOUZFDIFNDM&v=20131124";
 var cloudMadeAPIKey = '7da9717aa6e646c2b4d6a6a1fbc94765';
 
+itineraries = JSON.parse(store.get('fourpeople'));
 console.log(itineraries);
 
 //get id from URL
@@ -477,16 +478,18 @@ function buildResultPanel(number, name, address, id, category) {
 // Takes the new itinerary, sorts it, and displays everything
 function sortAndDisplayItinerary(newVenue) {
 	//sort itinerary first
-	itinerary.itinerary.sort(function(a,b) {
-		var dateA = new Date(a.startDate);
-		var dateB = new Date(b.startDate);
-		
-		if(dateA > dateB) 
-			return 1;
-		if(dateA < dateB)
-			return -1;
-		return 0;
-	});
+	if(itinerary.itinerary.length > 2) {
+		itinerary.itinerary.sort(function(a,b) {
+			var dateA = new Date(a.startDate);
+			var dateB = new Date(b.startDate);
+			
+			if(dateA > dateB) 
+				return 1;
+			if(dateA < dateB)
+				return -1;
+			return 0;
+		});
+	}
 	
 	// clear out table
 	$("#venue-table-tbody").html(" ");
