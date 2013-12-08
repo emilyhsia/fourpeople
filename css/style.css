@@ -264,3 +264,7 @@ td.time {
 	overflow-y: scroll;
 }
 
+.highlight-venue {
+	background-color: lightyellow;
+}
+
