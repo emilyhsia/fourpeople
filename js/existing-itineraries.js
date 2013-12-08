@@ -5,12 +5,12 @@ var currentJSON = store.get('fourpeople');
 
 if(currentJSON == null) {
 	itineraries.forEach(function(itinerary){
-		$("table tbody").append(buildItineraryDiv(itinerary));
+		$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
 	});
 } else {
 	itineraries = JSON.parse(currentJSON);
 	itineraries.forEach(function(itinerary) {
-		$("table tbody").append(buildItineraryDiv(itinerary));
+		$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
 	});
 }
 
@@ -37,25 +37,36 @@ function buildItineraryDiv(itinerary) {
 	}
 	
 	html += '<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>' + 
-			'<td><button id="delete-' + id + '" class="btn btn-danger">Delete</button></td>' + 
+			'<td><button id="delete-' + id + '" class="btn btn-danger delete-itinerary">Delete</button></td>' + 
 			'<td class="hidden-id-holder" style="display:none">' + id + '</td>' + 
 		'</tr>';
 		
 	return html;
 }
 
-$(document).on('click', '.btn-danger', function(){
+// if click delete button, remove from itinerary list and stored itineraries
+$(document).on('click', '.delete-itinerary', function(){
 	var deleteButtonEl = event.target;
 	// Get the venue ID
 	var itineraryID = $(deleteButtonEl).attr('id').split("-")[1];
 
 	console.log("Clicked delete-" + itineraryID);
-	alert("Coming soon :) ");
 	
-	/*//remove venue from itinerary
-	itinerary.itinerary.splice(i, 1);
+	var i = 0;
+	var itineraryFound = false;
+	while(!itineraryFound) {
+		if(itineraries[i].id == itineraryID) {
+			itineraryFound = true;
+		}
+		i++;
+	}
+	i--;
+	//remove venue from itinerary
+	itineraries.splice(i, 1);
+	store.set('fourpeople', JSON.stringify(itineraries));
+	
 	//remove venue from display
-	var tbody = document.getElementById("venue-table-tbody");
-	var trChild = document.getElementById("tr-" + thisVenue.id);
-	var throwawayNode = tbody.removeChild(trChild);*/
+	var tbody = document.getElementById("current-itinerary-holder");
+	var trChild = document.getElementById("itinerary-" + itineraryID);
+	var throwawayNode = tbody.removeChild(trChild);
 });
