@@ -15,7 +15,7 @@ $(function(){
           '<ul class="nav navbar-nav">' +
             '<li class="active"><a href="#">Edit</a></li>' +
             '<li><a href="#about">New</a></li>' +
-            '<li><a href="#contact">Existing</a></li>' +
+            '<li><a href="existing-itinerary.html">Existing</a></li>' +
           '</ul>' +
         '</div><!--/.nav-collapse -->' +
       '</div>';

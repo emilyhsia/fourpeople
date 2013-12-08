@@ -14,12 +14,13 @@ function getCalendarString(dateString) {
 		day = "0" + day;
 	}
 	
-	
 	return year + "-" + month + "-" + day;
 }
 
-// get string in form of hh:mm PM from date string
-function getTimeString(dateString) {
+/* 
+ * Format dateString to display as HH:MM AM/PM
+ */
+function getDisplayTimeString(dateString) {
 	var fullDate = new Date(dateString);
 	var hour = fullDate.getHours();
 	var minute = fullDate.getMinutes();
@@ -39,4 +40,23 @@ function getTimeString(dateString) {
 	}
 	
 	return hour + ":" + minute + " " + AMPM;
+}
+
+/* 
+ * Format dateString to prepopulate <input type="time">. Returns HH:MM:SS in military time
+ */
+function getInputTimeString(dateString) {
+	var fullDate = new Date(dateString);
+	var hour = fullDate.getHours();
+	var minute = fullDate.getMinutes();
+
+	if(hour < 10) {
+		hour = "0" + hour;
+	}
+	if(minute < 10) {
+		minute = "0" + minute;
+	}
+	
+	// Set seconds to :00
+	return hour + ":" + minute + ":00";
 }

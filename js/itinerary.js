@@ -5,6 +5,35 @@ var CLIENT_ID = "5CYXNIKAOPTKCKIGHNPPJ3DQJBY4IPL0XJL140TLN121U514";
 var CLIENT_SECRET = "RPZTJ5NHBY0L213UKWP3T3DF2QVUXNKMW34FRJOUZFDIFNDM&v=20131124";
 var cloudMadeAPIKey = '7da9717aa6e646c2b4d6a6a1fbc94765';
 
+console.log(itineraries);
+
+//get id from URL
+//split at & if multiple parameters passed; id must be first
+//TODO: make more robust
+var idEquals = location.search.split("&")[0];
+var itineraryID = parseInt(idEquals.split("=")[1]);
+var n = 0;
+var foundItinerary = false;
+var itinerary = null;
+while(!foundItinerary && n < itineraries.length) {
+	if(itineraries[n].id == itineraryID) {
+		console.log("Itinerary id #" + itineraryID + " found.");
+		itinerary = itineraries[n];
+		foundItinerary = true;
+	}
+	n++;
+}
+
+// TODO
+if(!foundItinerary) {
+	var toDisplay = '<h1>Oops, this is embarrassing!</h1>' + 
+					'<h3>We could not find your itinerary.</h3>' + 
+					'<p>Please make sure your ID is correct or check out ' + 
+					'our <a href="existing-itineraries.html">existing itineraries</a>.</p>';
+	$("#itinerary-content").html(toDisplay);
+	$("#add-venues-content").hide();
+}
+
 //=============================================================================
 //=============================================================================
 // Viewing current itinerary
@@ -97,9 +126,9 @@ var displayVenue = function(venue) {
 	var venueColumn = $(document.createElement('td')).addClass('venue').append(name).append(infoTable);
 
 	// time
-	var timeDisplay = $(document.createElement('div')).addClass('timeDisplay').text(venue.start + " - " + venue.end);
+	var timeDisplay = $(document.createElement('div')).addClass('timeDisplay').text(getDisplayTimeString(venue.startDate) + " - " + getDisplayTimeString(venue.endDate));
 
-	//var startTimeChangeHTML = '<b>Start</b><br>Date: <input type="text" class="date-picker" id="start-date-picker-' + venue.id + '"> Time: <input type="text" class="time-picker" id="start-time-picker-' + venue.id + '"size="10" autocomplete="OFF"><br>';
+	// time change
 	var startTimeChangeHTML = 
 	'<span width="400px;"><b>Start</b></span>' + 
 	'<form class="form-inline" role="form">' + 
@@ -126,20 +155,14 @@ var displayVenue = function(venue) {
   		'</div>' + 
 	'</form>';
 
-	//var startTimeChangeHTML = '<table><tr><td>Date: <input type="text" class="date-picker" id="start-date-picker-' + venue.id + '"></td><td>Time: <input type="text" class="time-picker" id="start-time-picker-' + venue.id + '"size="10" autocomplete="OFF"></td></tr></table>';
-	//var endTimeChangeHTML = '<p><b>End</b></p>Date: <input type="text" class="date-picker" id="end-date-picker-' + venue.id + '"> Time: <input type="text" class="time-picker" id="end-time-picker-' + venue.id + '"size="10" autocomplete="OFF"><br><br>';
+	
 	var doneButton = '<button class="btn btn-primary btn-sm" id="done-' + venue.id + '">Save</button>';
 	var deleteButton = '<button class="btn btn-danger btn-sm" id="delete-' + venue.id + '">Delete</button>';
 	var buttonGroup = $(document.createElement('div')).html(doneButton + deleteButton);
 	buttonGroup.css("margin-top", "10px");
 	var timeChange = $(document.createElement('div')).addClass('timeChange').html(startTimeChangeHTML + endTimeChangeHTML).append(buttonGroup);
-	var timeColumn = $(document.createElement('td')).addClass('time').append(timeDisplay).append(timeChange);
+	//var timeColumn = $(document.createElement('td')).addClass('time').append(timeDisplay).append(timeChange);
 
-	//var startTimeChangeHTML = '<b>Start</b><br>Date: <input type="text" class="date-picker" id="start-date-picker-' + venue.id + '"> Time: <input type="text" class="time-picker" id="start-time-picker-' + venue.id + '"size="10" autocomplete="OFF"><br>';
-	//var endTimeChangeHTML = '<b>End</b><br>Date: <input type="text" class="date-picker" id="end-date-picker-' + venue.id + '"> Time: <input type="text" class="time-picker" id="end-time-picker-' + venue.id + '"size="10" autocomplete="OFF"><br><br>';
-	//var doneButton = '<button class="btn btn-primary btn-sm" id="done-' + venue.id + '">Done editing</button>';
-	//var deleteButton = '<button class="btn btn-danger btn-sm" id="delete-' + venue.id + '">Delete venue</button>';
-	//var timeChange = $(document.createElement('div')).addClass('timeChange').html(startTimeChangeHTML + endTimeChangeHTML + deleteButton + doneButton);
 	var confirmDeleteHTML = 'Are you sure you want to delete?<br> This cannot be undone.<br><br>' + 
 				'<button class="btn btn-sm btn-danger" id="yes-delete-'+venue.id+'">Yes, delete</button>' + 
 				'<button class="btn btn-sm btn-primary" id="no-cancel-'+venue.id+'">No, cancel</button>';
@@ -159,10 +182,9 @@ var displayVenue = function(venue) {
 	
 	// prepopulate date/time pickers with current values
 	$("#start-date-picker-" + venue.id).val(getCalendarString(venue.startDate));
-	console.log(getCalendarString(venue.startDate));
-	$("#start-time-picker-" + venue.id).val(getTimeString(venue.startDate));
+	$("#start-time-picker-" + venue.id).val(getInputTimeString(venue.startDate));
 	$("#end-date-picker-" + venue.id).val(getCalendarString(venue.endDate));
-	$("#end-time-picker-" + venue.id).val(getTimeString(venue.endDate));
+	$("#end-time-picker-" + venue.id).val(getInputTimeString(venue.endDate));
 	
 
 	var leafletMap = L.map('map' + venue.venue.id, {
@@ -209,6 +231,8 @@ $("#add-venues-content").hide();
 var durLength = 400;
 // When click "Add venues," show search sidebar
 $("#show-add-venues").click(function() {
+	//$('.timeChange').hide();
+	//$('.timeDisplay').show();
 	$("#itinerary-content").animate({
        width: '50%'
     }, { duration: durLength, queue: false });
@@ -338,8 +362,15 @@ function showResults(venues) {
 			address += "<br>Cross Street: " + venues[i].location.crossStreet + "";
 		}
 		var id = venues[i].id;
-		$("#search-results").append(buildResultPanel(i, name, address, id));
-	
+		var category;
+		venues[i].categories.forEach(function(cat) {
+			if (cat.primary) {
+				category = cat;
+			}
+		});
+		
+
+		$("#search-results").append(buildResultPanel(i, name, address, id, category));
 		var mapID = 'panel-map-' + i;
 		var lat = venues[i].location.lat;
 		var lng = venues[i].location.lng;
@@ -351,25 +382,75 @@ function showResults(venues) {
 		L.marker([lat, lng]).addTo(map)
 			.bindPopup('Pretty popup. <br> Easily customizable.');
 	}
+	$('.panel-search-result').on('click', function() {
+		var id = $(this).find('.hidden-venue-id').text();
+		console.log(id);
+		$(this).find('.panel-set-time').toggle(400);
+	});
 
 }
 
 // Builds the panel for a single search result
-function buildResultPanel(number, name, address, id) {
+function buildResultPanel(number, name, address, id, category) {
+	var icon = category.icon.prefix + "bg_88" + category.icon.suffix;
+
+	var startTimeSetHTML = 
+	'<span width="400px;"><b>Start</b></span>' + 
+	'<form class="form-inline" role="form">' + 
+  		'<div class="form-group">' + 
+    		'<label class="sr-only" for="start-date-picker-result-' + number + '">Date</label>' + 
+    		'<input type="date" class="form-control date-picker" id="start-date-picker-result-' + number + '" placeholder="Date">' + 
+  		'</div>' + 
+ 		 '<div class="form-group">' + 
+			'<label class="sr-only" for="start-time-picker-result-' + number + '">Time</label>' + 
+			'<input type="time" class="form-control time-picker" id="start-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+  		'</div>' + 
+	'</form>';
+
+	var endTimeSetHTML = 
+	'<span width="400px;"><b>End</b></span>' + 
+	'<form class="form-inline" role="form">' + 
+  		'<div class="form-group">' + 
+    		'<label class="sr-only" for="end-date-picker-result-' + number + '">Date</label>' + 
+    		'<input type="date" class="form-control date-picker" id="end-date-picker-result-' + number + '" placeholder="Date">' + 
+  		'</div>' + 
+ 		 '<div class="form-group">' + 
+			'<label class="sr-only" for="end-time-picker-result-' + number + '">Time</label>' + 
+			'<input type="time" class="form-control time-picker" id="end-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+  		'</div>' + 
+	'</form>';
+
 	var html = 
-		'<div class="panel panel-default">' +
-			'<div class="panel-heading">' + 
-              '<h3 class="panel-title">' + name + '</h3>' +
-            '</div>' +
+		'<div class="panel panel-default panel-search-result">' +
             '<div class="panel-body">' +
-              '<div class="panel-text-info">' + address + '</div>' +
-			  '<div class="panel-map" id="panel-map-' + number +'"></div>' +
-			  '<div class="panel-add-button btn btn-lg btn-primary">+<br>Add<br>'+
-			  '<span class="hidden-venue-id">' + id + '</span></div>' +
+            	'<table><tbody>' + 
+            		'<tr>' + 
+            			'<td><img src="' + icon + '" style="padding-right:10px;"></td>' + 
+            			'<td style="width:300px">' +
+            				'<h4 class="list-group-item-heading">'+ name + '</h4>' + 
+            				'<p>' + address + '</p>' + 
+            				'<p>' + category.name + '</p>' + 
+            			'</td>' + 
+            			'<td><div class="panel-map" id="panel-map-' + number +'"></div></td>' + 
+            			
+            		'</tr>' + 
+            	'</tbody></table>' +
             '</div>' +
+            '<div class="panel-set-time style="display:none"><table>' + 
+            	'<tr>' + 
+            		'<td style="width:400px">' + startTimeSetHTML + endTimeSetHTML + '</td>' + 
+            		'<td><div class="panel-add-button btn btn-lg btn-primary">+<br>Add<br>' + 
+            				'<span class="hidden-venue-id">' + id + '</span></div>' +
+            			'</td>' + 
+            	'</tr>' +
+            	
+            	
+            '</table></div>' +
           '</div>';
 	return html;
 }
+
+
 
 // very similar to lookup function, but uses venueID directly
 // TODO: have user select time and date instead of hard-coded
@@ -383,9 +464,6 @@ var lookupByID = function(venueID) {
 			
 			itinerary.itinerary.push({
 				id: venueID,
-				start: "4:30 PM",
-				end: "4:45 PM",
-				date: "July 02, 2013",
 				startDate: "Tue Jul 02 2013 16:30:00 GMT-0400 (Eastern Daylight Time)",
 				endDate: "Tue Jul 02 2013 16:45:00 GMT-0400 (Eastern Daylight Time)",
 				venue: fullVenue
@@ -460,6 +538,8 @@ $(document).on('click', '.panel-add-button', function(){
 $("#clear-search").click(function(){
 	clearOldSearch();
 });
+
+
 
 //=============================================================================
 //=============================================================================
@@ -545,5 +625,3 @@ $(document).on('click', '.edit-venue', function(){
 		});
 	}
 });
-
-//$(document).on('click')

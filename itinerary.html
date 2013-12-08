@@ -54,22 +54,30 @@
 		
 		<div id="add-venues-content" class="right">
 			<h1>Add Venues</h1>
-			<div id="builder-controls">
-				<div class="left two-thirds">
-					<label>Search for: <input type="text" name="query" id="query" placeholder="Starbucks or museum"></label>
-					&nbsp;&nbsp;
-					<label>near: <input type="text" name="location" id="location" placeholder="New York, NY or 90210"></label>
-				</div>
-				<div class="right one-third" style="text-align: center;">
-					<button type="button" id="search-for-venues" class="btn btn-primary">Search!</button><br>
+			<!-- holds any error messages -->
+			<div class="alert alert-danger" id="error-holder"></div>
+			<div id="builder-controls" style="text-align:center;">
+				<div class="row">
+					<div class="col-lg-7">
+						<div class="input-group">
+						  <span class="input-group-addon">Find:</span>
+						  <input type="text" class="form-control" name="query" id="query" placeholder="Starbucks or museum">
+						</div>
+					</div>
+					<div class="col-lg-5">
+						<div class="input-group">
+						  <span class="input-group-addon">near:</span>
+						  <input type="text" class="form-control" name="location" id="location" placeholder="New York, NY or 90210">
+						</div>
+					</div>
+				</div><!--/row-->
+				<div style="padding-top: 10px;">
+					<button type="button" id="search-for-venues" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Search</button><br>
 					<a id="clear-search">Clear search</a>
 				</div>
 				<br><br>
-			</div>
-			<!-- clear left/right divs above -->
-			<div style="clear: both;"></div>
-			<!-- holds any error messages -->
-			<div class="alert alert-danger" id="error-holder"></div>
+			</div> <!-- /builder-controls-->
+
 			<hr>
 			<div id="add-venue-build-controls">
 				<div class="left two-thirds">
@@ -98,7 +106,6 @@
 		</div> <!-- /#add-venues-content.right -->
 
     </div><!-- /.container -->
-
 	<div class="container" id="footer">
 		<hr>
 		<div id="map-attribution"><a href="http://leafletjs.com/">Leaflet</a> | Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a></div>
@@ -107,10 +114,8 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-	<!-- load local version of jQuery if cdn fails -->
-	<script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js">\x3C/script>')</script>
-	<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="jquery-ui/js/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 	
 	<!-- custom JavaScript -->
