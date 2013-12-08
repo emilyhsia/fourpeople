@@ -65,43 +65,31 @@ var lookupFoursquareVenue = function(venueObject, callback) {
 
 $('h1#itinerary-title').text(itinerary.name);
 
+/* 
+ * Displays a single venue. The venue param is the a venue Object with the injected Foursquare venue
+ * The <tr> element for the single venue should already be created and appended to the DOM (do this to preserve order
+ * from async calls)
+ * 
+ * Each venue is displayed as a single row in a table
+ * ------------------------------------------------
+ * |  cate	|	venue	|				|			|
+ * |  gory	|   info 	|	time		|	map		|						
+ * |  icon	|			|				|			|
+ *  ------------------------------------------------  
+ */
 var displayVenue = function(venue) {
-	var category;
-	venue.venue.categories.forEach(function(cat) {
-		if (cat.primary) {
-			category = cat;
-		}
-	});
-
-	// Each venue is displayed as a single row in a table
-	/*  ------------------------------------------------
-	 * |  cate	|	venue	|				|			|
-	 * |  gory	|   info 	|	time		|	map		|						
-	 * |  icon	|			|				|			|
-	 *  ------------------------------------------------
-	*/  
-	// Build the row and append to the table body
+	
+	// Get the venue category
+	// Foursquare gives us a lot of different categories, but we only care about the "primary" one
+	var category = _setVenuePrimaryCategory(venue);
 
 	// category icon
-	var iconImg = document.createElement('img');
-	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix);
-	var iconColumn = $(document.createElement('td')).addClass('icon');
-	iconColumn.append(iconImg);
+	var iconColumn = _createCategoryIconColumn(category);
 
 	// venue info
-	var name = $(document.createElement('h4')).addClass('list-group-item-heading').text(venue.venue.name);
-	var rating = $(document.createElement('h3')).append($(document.createElement('span')).addClass('label').addClass('label-success').text(venue.venue.rating)).addClass('rating');
-	var address = $(document.createElement('p')).addClass('list-group-item-text').text(venue.venue.location.address);
-	var categoryLabel = $(document.createElement('p')).text(category.shortName);
-	var venueInfo = $(document.createElement('div')).addClass('info').append(address).append(categoryLabel);
+	var venueInfoColumn = _createVenueInfoColumn(venue);
 
-	// rating and venue info table
-	rating = $(document.createElement('td')).append(rating);
-	venueInfo = $(document.createElement('td')).append(venueInfo);
-	var infoTable = $(document.createElement('table')).append($(document.createElement('tbody')).append($(document.createElement('tr')).append(rating).append(venueInfo)));
-	var venueColumn = $(document.createElement('td')).addClass('venue').append(name).append(infoTable);
-
-	// time
+	// The time column handles the bulk of the work. It displays time, allows the user to change the time, and allows the user to delete the venue
 	var timeDisplay = $(document.createElement('div')).addClass('timeDisplay').text(getDisplayTimeString(venue.startDate) + " - " + getDisplayTimeString(venue.endDate));
 
 	// time change
@@ -137,8 +125,8 @@ var displayVenue = function(venue) {
 	var buttonGroup = $(document.createElement('div')).html(doneButton + deleteButton);
 	buttonGroup.css("margin-top", "10px");
 	var timeChange = $(document.createElement('div')).addClass('timeChange').html(startTimeChangeHTML + endTimeChangeHTML).append(buttonGroup);
-	//var timeColumn = $(document.createElement('td')).addClass('time').append(timeDisplay).append(timeChange);
 
+	// Confirm delete
 	var confirmDeleteHTML = 'Are you sure you want to delete?<br> This cannot be undone.<br><br>' + 
 				'<button class="btn btn-sm btn-danger" id="yes-delete-'+venue.id+'">Yes, delete</button>' + 
 				'<button class="btn btn-sm btn-primary" id="no-cancel-'+venue.id+'">No, cancel</button>';
@@ -153,7 +141,7 @@ var displayVenue = function(venue) {
 	var editColumn = $(document.createElement('td')).addClass('edit-venue').html(editHTML);
 
 	// append the icon, venue info, time, and map columns to a row element
-	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueColumn).append(timeColumn).append(mapEl).append(editColumn);
+	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueInfoColumn).append(timeColumn).append(mapEl).append(editColumn);
 
 	
 	// prepopulate date/time pickers with current values
@@ -174,6 +162,69 @@ var displayVenue = function(venue) {
 	L.marker([venue.venue.location.lat, venue.venue.location.lng]).addTo(leafletMap);
 
 	// more details
+}
+
+/* 
+ * Goes through all the Foursquare venue.categories for the specified venue and stores the main/"primary"
+ * category as venue.category
+ * @type helper
+ */
+var _setVenuePrimaryCategory = function(venueObject) {
+	var primary;
+	venueObject.venue.categories.forEach(function(category) {
+		if (category.primary) {
+			primary = category;
+		}
+	});
+	venueObject.venue.category = primary;
+	return primary;
+}
+
+/*
+ * Creates and returns the icon column
+ * @type helper
+ */
+var _createCategoryIconColumn = function(category) {
+	var iconColumn = $(document.createElement('td')).addClass('icon');
+	var iconImg = document.createElement('img');
+	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix);
+	iconColumn.append(iconImg);
+	return iconColumn;
+}
+
+/* 
+ * Creates and returns the venue info table a single venue. 
+ * @type helper
+ * The venue param is the a venue Object with the injected Foursquare venue
+ * Venue info = name, rating, address, category type
+ * 
+ *  name 				
+ * ----------------------
+ * |     	| address	|
+ * | rating	| category 	|
+ *  ---------------------
+ */
+var _createVenueInfoColumn = function(venue) {
+	// name
+	var name = $(document.createElement('h4')).addClass('list-group-item-heading').text(venue.venue.name);
+	// Now create mini table that holds rating, address, and category
+	var infoTable = $(document.createElement('table')).append($(document.createElement('tbody')));
+	// rating
+	var ratingHeader = $(document.createElement('h3')).addClass('rating');
+	var ratingSpan = $(document.createElement('span')).text(venue.venue.rating).addClass('label').addClass('label-success');
+	ratingHeader.append(ratingSpan);
+	var ratingColumn = $(document.createElement('td')).append(ratingHeader);
+	// address & category
+	var addressText = $(document.createElement('p')).text(venue.venue.location.address);
+	var categoryText = $(document.createElement('p')).text(venue.venue.category.shortName);
+	var addressCategoryDiv = $(document.createElement('div')).addClass('info').append(addressText).append(categoryText);
+	var addressCategoryColumn = $(document.createElement('td')).append(addressCategoryDiv);
+	// rating and venue info table
+	var row = $(document.createElement('tr')).append(ratingColumn).append(addressCategoryColumn);
+	var ratingAddressCategoryTable = $(document.createElement('table')).append($(document.createElement('tbody')).append(row));
+	
+	var venueInfoColumn = $(document.createElement('td')).addClass('venue').append(name).append(ratingAddressCategoryTable);
+	return venueInfoColumn;
 }
 
 // display itinerary on page load
@@ -397,6 +448,7 @@ function showResults(venues) {
 	}
 
 	// When a search result is clicked, show/hide the datetime picker
+	// @type event listener
 	$('.panel-body-click-target').on('click', function() {
 		var id = $(this).find('.hidden-venue-id').text();
 		$(this).siblings('.panel-set-time').toggle(400);
@@ -475,8 +527,32 @@ function buildResultPanel(number, name, address, id, category) {
 
 
 // Takes the new itinerary, sorts it, and displays everything
-function sortAndDisplayItinerary(newVenue) {
+var sortAndDisplayItinerary = function(newVenue) {
 	//sort itinerary first
+	sortItinerary();
+	
+	// clear out table
+	$("#venue-table-tbody").html(" ");
+	
+	//go through everything in itinerary and re-display
+	itinerary.itinerary.forEach(function(venue){
+		// First create and append tr element before lookup, async call might mess up order
+		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
+		$('tbody#venue-table-tbody').append(row);
+		displayVenue(venue);
+	});
+
+	// highlight the newly added venue and fade out
+	$('#tr-' + newVenue.id).addClass('highlight-venue');
+	setTimeout(function() {
+		$('#tr-' + newVenue.id).removeClass('highlight-venue');
+	}, 600);
+}
+
+/*
+ * Sorts the itinerary by startDate
+ */
+var sortItinerary = function() {
 	itinerary.itinerary.sort(function(a,b) {
 		var dateA = new Date(a.startDate);
 		var dateB = new Date(b.startDate);
@@ -487,29 +563,15 @@ function sortAndDisplayItinerary(newVenue) {
 			return -1;
 		return 0;
 	});
-	
-	// clear out table
-	$("#venue-table-tbody").html(" ");
-	
-	//go through everything in itinerary and re-display
-	itinerary.itinerary.forEach(function(venue){
-		console.log(venue);
-		// create and append tr element before lookup, async call might mess up order
-		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
-		$('tbody#venue-table-tbody').append(row);
-		displayVenue(venue);
-	});
-
-	// highlight the newly added venue
-	$('#tr-' + newVenue.id).addClass('highlight-venue');
-	setTimeout(function() {
-		$('#tr-' + newVenue.id).removeClass('highlight-venue');
-	}, 600);
 }
 
-// Add venue to itinerary when add button clicked 
-// Note: jQuery .click doesn't pick up elements when added to the page after load,
-// so using .on here
+/* 
+ * Add venue button clicked
+ * @type event listener
+ * Add venue to itinerary when add button clicked 
+ * Note: jQuery .click doesn't pick up elements when added to the page after load,
+ * so using .on here
+ */
 $(document).on('click', '.panel-add-button', function(){
 	var addButtonEl = event.target;
 	// Get the venue ID
@@ -536,7 +598,11 @@ $(document).on('click', '.panel-add-button', function(){
 	lookupFoursquareVenue(venue, sortAndDisplayItinerary);
 });
 
-// clears all fields and old search results
+/* 
+ * Clear search clicked
+ * @type event listener
+ * Clears all fields and old search results
+ */
 $("#clear-search").click(function(){
 	clearOldSearch();
 });
