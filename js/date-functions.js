@@ -1,5 +1,17 @@
 /** Functions for parsing dates and times */
 
+/*
+ * Creates our recognized dateString from the date (YYYY-MM-DD) and time (HH:MM:SS)
+ */
+function createDateString(date, time) {
+	var dateObject = new Date();
+	var fullDateArray = date.toString().split('-');
+	dateObject.setFullYear(fullDateArray[0], fullDateArray[1] - 1, fullDateArray[2]);
+	var fullTimeArray = time.toString().split(':');
+	dateObject.setHours(fullTimeArray[0], fullTimeArray[1], 0, 0); // seconds and milliseconds set to 0
+	return dateObject;
+}
+
 // get string in form mm/dd/yyyy from date string
 function getCalendarString(dateString) {
 	var fullDate = new Date(dateString);
@@ -59,4 +71,15 @@ function getInputTimeString(dateString) {
 	
 	// Set seconds to :00
 	return hour + ":" + minute + ":00";
+}
+
+/*
+ * Adds an hour to the dateString. Can't just do getHours() + 1
+ * in case time is close to midnight
+ */
+function addHour(dateString) {
+	var h = 1;
+	var fullDate = new Date(dateString);
+	fullDate.setTime(fullDate.getTime() + (h*60*60*1000)); 
+   	return fullDate; 
 }

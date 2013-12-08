@@ -196,13 +196,22 @@ td.time {
 
 .panel-map {
 	float: left;
-	width: 40%;
-	height: 100px;
+	width: 150px;
+	height: 150px;
+}
+
+.panel-search-result:hover {
+	background-color: #f7f7f9;
+	cursor: pointer;
+}
+
+.panel-set-time {
+	display: none;
+	padding: 20px;
 }
 
 .panel-add-button {
 	float: right;
-	width: 22%;
 	font-weight: bold;
 }
 
@@ -245,3 +254,17 @@ td.time {
 .no-close .ui-dialog-titlebar-close {
 	display: none;
 }
+
+#builder-controls {
+	margin-top: 25px;
+}
+
+#search-results {
+	height: 800px;
+	overflow-y: scroll;
+}
+
+.highlight-venue {
+	background-color: lightyellow;
+}
+

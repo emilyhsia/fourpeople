@@ -46,45 +46,21 @@ var formatVenueLookupURL = function(id) {
 	return URL;
 }
 
-var lookup = function(venue) {
-	var urlToSend = formatVenueLookupURL(venue.id);
+/*
+ * Given a venueObject, retreives the corresponding Foursquare venue
+ * and calls callback with the Foursquare result injected into our
+ * venueObject
+ */
+var lookupFoursquareVenue = function(venueObject, callback) {
+	var urlToSend = formatVenueLookupURL(venueObject.id);
 	$.ajax({
 		  url: urlToSend
 		}).done(function(data) {
-			venue.venue = data.response.venue;
-			console.log(data.response.venue);
-			displayVenue(venue);
-	});
-}
-
-// display itinerary on page load
-displayAllVenues();
-
-function displayAllVenues() {
-	//sort itinerary first
-	if(itinerary.itinerary.length > 1) {
-		itinerary.itinerary.sort(function(a,b) {
-			var dateA = new Date(a.startDate);
-			var dateB = new Date(b.startDate);
-			
-			if(dateA > dateB) 
-				return 1;
-			if(dateA < dateB)
-				return -1;
-			return 0;
-		});
-	}
-	//empty table
-	$("#venue-table-tbody").html(" ");
-	//display all venues
-	itinerary.itinerary.forEach(function(venue){
-		// create and append tr element before lookup, async call might mess up order
-		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
-		//var expand = $(document.createElement('tr')).attr("id", "tr-expand-" + venue.id);
-
-		$('tbody#venue-table-tbody').append(row);
-		
-		lookup(venue);
+			// data.response.venue is the Foursquare venue object
+			// We inject the Foursquare venue to our venue object to display
+			venueObject.venue = data.response.venue;
+			// call the callback with the venueObject that now includes the injected Foursqaure venue
+			callback(venueObject);
 	});
 }
 
@@ -105,8 +81,6 @@ var displayVenue = function(venue) {
 	 * |  icon	|			|				|			|
 	 *  ------------------------------------------------
 	*/  
-
-
 	// Build the row and append to the table body
 
 	// category icon
@@ -203,6 +177,35 @@ var displayVenue = function(venue) {
 	// more details
 }
 
+// display itinerary on page load
+displayAllVenues();
+
+function displayAllVenues() {
+	//sort itinerary first
+	itinerary.itinerary.sort(function(a,b) {
+		var dateA = new Date(a.startDate);
+		var dateB = new Date(b.startDate);
+		
+		if(dateA > dateB) 
+			return 1;
+		if(dateA < dateB)
+			return -1;
+		return 0;
+	});
+	//empty table
+	$("#venue-table-tbody").html(" ");
+	//display all venues
+	itinerary.itinerary.forEach(function(venue){
+		// create and append tr element before lookup, async call might mess up order
+		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
+		//var expand = $(document.createElement('tr')).attr("id", "tr-expand-" + venue.id);
+
+		$('tbody#venue-table-tbody').append(row);
+		
+		lookupFoursquareVenue(venue, displayVenue);
+	});
+}
+
 //=============================================================================
 //=============================================================================
 // Adding to current itinerary
@@ -234,6 +237,8 @@ $("#add-venues-content").hide();
 var durLength = 400;
 // When click "Add venues," show search sidebar
 $("#show-add-venues").click(function() {
+	//$('.timeChange').hide();
+	//$('.timeDisplay').show();
 	$("#itinerary-content").animate({
        width: '50%'
     }, { duration: durLength, queue: false });
@@ -363,8 +368,23 @@ function showResults(venues) {
 			address += "<br>Cross Street: " + venues[i].location.crossStreet + "";
 		}
 		var id = venues[i].id;
-		$("#search-results").append(buildResultPanel(i, name, address, id));
-	
+		var category;
+		venues[i].categories.forEach(function(cat) {
+			if (cat.primary) {
+				category = cat;
+			}
+		});
+
+		$("#search-results").append(buildResultPanel(i, name, address, id, category));
+
+		// Prepopulating the datetime pickers
+		var prepopulatedStartTimeDate = getNextAvailableTime();
+		$('.start-date-picker-result').val(getCalendarString(prepopulatedStartTimeDate));
+		$('.start-time-picker-result').val(getInputTimeString(prepopulatedStartTimeDate));
+		var prepopulatedEndTimeDate = addHour(prepopulatedStartTimeDate);
+		$('.end-date-picker-result').val(getCalendarString(prepopulatedEndTimeDate));
+		$('.end-time-picker-result').val(getInputTimeString(prepopulatedEndTimeDate));
+
 		var mapID = 'panel-map-' + i;
 		var lat = venues[i].location.lat;
 		var lng = venues[i].location.lng;
@@ -377,51 +397,86 @@ function showResults(venues) {
 			.bindPopup('Pretty popup. <br> Easily customizable.');
 	}
 
+	// When a search result is clicked, show/hide the datetime picker
+	$('.panel-body-click-target').on('click', function() {
+		var id = $(this).find('.hidden-venue-id').text();
+		$(this).siblings('.panel-set-time').toggle(400);
+	});
+
+}
+
+/*
+ * Gets the next available time to prepopulate date/time for search results, which
+ * is the end date/time of the very last venue on the itinerary.
+ */
+function getNextAvailableTime() {
+	var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
+	return lastVenue.endDate;
 }
 
 // Builds the panel for a single search result
-function buildResultPanel(number, name, address, id) {
+function buildResultPanel(number, name, address, id, category) {
+	var icon = category.icon.prefix + "bg_88" + category.icon.suffix;
+
+	var startTimeSetHTML = 
+	'<span width="400px;"><b>Start</b></span>' + 
+	'<form class="form-inline" role="form">' + 
+  		'<div class="form-group">' + 
+    		'<label class="sr-only" for="start-date-picker-result-' + number + '">Date</label>' + 
+    		'<input type="date" class="start-date-picker-result form-control date-picker" id="start-date-picker-result-' + number + '" placeholder="Date">' + 
+  		'</div>' + 
+ 		 '<div class="form-group">' + 
+			'<label class="sr-only" for="start-time-picker-result-' + number + '">Time</label>' + 
+			'<input type="time" class="start-time-picker-result form-control time-picker" id="start-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+  		'</div>' + 
+	'</form>';
+
+	var endTimeSetHTML = 
+	'<span width="400px;"><b>End</b></span>' + 
+	'<form class="form-inline" role="form">' + 
+  		'<div class="form-group">' + 
+    		'<label class="sr-only" for="end-date-picker-result-' + number + '">Date</label>' + 
+    		'<input type="date" class="end-date-picker-result form-control date-picker" id="end-date-picker-result-' + number + '" placeholder="Date">' + 
+  		'</div>' + 
+ 		 '<div class="form-group">' + 
+			'<label class="sr-only" for="end-time-picker-result-' + number + '">Time</label>' + 
+			'<input type="time" class="end-time-picker-result form-control time-picker" id="end-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+  		'</div>' + 
+	'</form>';
+
 	var html = 
-		'<div class="panel panel-default">' +
-			'<div class="panel-heading">' + 
-              '<h3 class="panel-title">' + name + '</h3>' +
+		'<div class="panel panel-default panel-search-result">' +
+            '<div class="panel-body panel-body-click-target">' +
+            	'<table><tbody>' + 
+            		'<tr>' + 
+            			'<td><img src="' + icon + '" style="padding-right:10px;"></td>' + 
+            			'<td style="width:300px">' +
+            				'<h4 class="list-group-item-heading">'+ name + '</h4>' + 
+            				'<p>' + address + '</p>' + 
+            				'<p>' + category.name + '</p>' + 
+            			'</td>' + 
+            			'<td><div class="panel-map" id="panel-map-' + number +'"></div></td>' + 
+            			'<span class="hidden-venue-id">' + id + '</span></div>' +
+            		'</tr>' + 
+            	'</tbody></table>' +
             '</div>' +
-            '<div class="panel-body">' +
-              '<div class="panel-text-info">' + address + '</div>' +
-			  '<div class="panel-map" id="panel-map-' + number +'"></div>' +
-			  '<div class="panel-add-button btn btn-lg btn-primary">+<br>Add<br>'+
-			  '<span class="hidden-venue-id">' + id + '</span></div>' +
-            '</div>' +
+            '<div class="panel-set-time style="display:none"><table>' + 
+            	'<tr>' + 
+            		'<td style="width:400px">' + startTimeSetHTML + endTimeSetHTML + '</td>' + 
+            		'<td><div class="panel-add-button btn btn-lg btn-primary" id="add-button-result-' + number + '">+<br>Add<br>' + 
+            				'<span class="hidden-venue-id">' + id + '</span></div>' +
+            			'</td>' + 
+            	'</tr>' +
+            	
+            	
+            '</table></div>' +
           '</div>';
 	return html;
 }
 
-// very similar to lookup function, but uses venueID directly
-// TODO: have user select time and date instead of hard-coded
-var lookupByID = function(venueID) {
-	var urlToSend = formatVenueLookupURL(venueID);
-	$.ajax({
-		  url: urlToSend
-		}).done(function(data) {
-			var fullVenue = data.response.venue;
-			console.log(fullVenue);
-			
-			itinerary.itinerary.push({
-				id: venueID,
-				start: "4:30 PM",
-				end: "4:45 PM",
-				date: "July 02, 2013",
-				startDate: "Tue Jul 02 2013 16:30:00 GMT-0400 (Eastern Daylight Time)",
-				endDate: "Tue Jul 02 2013 16:45:00 GMT-0400 (Eastern Daylight Time)",
-				venue: fullVenue
-			});
-			
-			addSingleVenue();
-	});
-}
 
 // Takes the new itinerary, sorts it, and displays everything
-function addSingleVenue() {
+function sortAndDisplayItinerary(newVenue) {
 	//sort itinerary first
 	if(itinerary.itinerary.length > 2) {
 		itinerary.itinerary.sort(function(a,b) {
@@ -441,52 +496,68 @@ function addSingleVenue() {
 	
 	//go through everything in itinerary and re-display
 	itinerary.itinerary.forEach(function(venue){
+		console.log(venue);
 		// create and append tr element before lookup, async call might mess up order
 		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
-		//var expand = $(document.createElement('tr')).attr("id", "tr-expand-" + venue.id);
-
 		$('tbody#venue-table-tbody').append(row);
-		
 		displayVenue(venue);
 	});
+
+	// highlight the newly added venue
+	$('#tr-' + newVenue.id).addClass('highlight-venue');
+	setTimeout(function() {
+		$('#tr-' + newVenue.id).removeClass('highlight-venue');
+	}, 600);
 }
 
 // Add venue to itinerary when add button clicked 
 // Note: jQuery .click doesn't pick up elements when added to the page after load,
 // so using .on here
 $(document).on('click', '.panel-add-button', function(){
-	var venueID = $(event.target).children("span.hidden-venue-id").text();
-	console.log("Venue ID: " + venueID);
-	
-	$("#search-results").hide();
-	$("#add-venue-build-controls").show();
-	
-	$("#add-venue-get-build").click(function(){
-		//TODO: error checking on inputs
-		//TODO: show user feedback
-		
-		// create and append tr element before lookup, async call might mess up order
-		var row = $(document.createElement('tr')).attr("id", "tr-" + venueID);
-		$('tbody#venue-table-tbody').append(row);
-		
-		lookupByID(venueID);
-		
-		//TODO: show complete
-		$("#add-venue-build-controls").hide();
-		$("#search-results").show();
-	});
-	
-	// if click "cancel" just switch view back
-	$("#cancel-add").click(function(){
-		$("#add-venue-build-controls").hide();
-		$("#search-results").show();
-	});
+	var addButtonEl = event.target;
+	// Get the venue ID
+	var venueID = $(addButtonEl).children("span.hidden-venue-id").text();
+
+	// Now we have to read the datetime picker values...
+	// First get the result number from button ID: id="add-button-result-' + number
+	var buttonID = $(addButtonEl).attr('id');
+	var resultNo = buttonID.split("-")[3];
+	// Now that we have the number, we can read the values from the correct datetime picker 
+	// id="start-date-picker-result-" + number
+	var startDate = $('#start-date-picker-result-' + resultNo).val();
+
+	var startTime = $('#start-time-picker-result-' + resultNo).val();
+	console.log(startDate + " time: " + startTime);
+	var endDate = $('#end-date-picker-result-' + resultNo).val();
+	var endTime = $('#end-time-picker-result-' + resultNo).val();
+	var startDateString = createDateString(startDate, startTime).toString();
+	var endDateString = createDateString(endDate, endTime).toString();
+	// create new venue object and directly add it to the itinerary object
+	var venue = createVenueObject(venueID, startDateString, endDateString);
+	itinerary.itinerary.push(venue);
+	// Lookup the Foursquare venue and re-sort and display itinerary
+	lookupFoursquareVenue(venue, sortAndDisplayItinerary);
 });
 
 // clears all fields and old search results
 $("#clear-search").click(function(){
 	clearOldSearch();
 });
+
+/*
+ * Creates and returns a venue object with id, startDate, and endDate
+ * Note: this object does not contain the Foursquare venue
+ */
+var createVenueObject = function(id, startDate, endDate) {
+	var venue = {
+		id: id,
+		startDate: startDate,
+		endDate: endDate
+	}
+	return venue;
+}
+
+
 
 //=============================================================================
 //=============================================================================
