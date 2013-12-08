@@ -40,6 +40,12 @@ if(!foundItinerary) {
 // Viewing current itinerary
 //=============================================================================
 //=============================================================================
+$("#edit-itinerary-name").click(function(){
+	alert("Coming soon! :)");
+});
+$("#delete-itinerary").click(function() {
+	alert("Are you sure? (We can't do this yet anyway!)");
+});
 
 var formatVenueLookupURL = function(id) {
 	var URL = baseURL + encodeURIComponent(id) + "?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET;
