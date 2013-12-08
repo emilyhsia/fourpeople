@@ -37,7 +37,13 @@ function buildItineraryDiv(itinerary) {
 	}
 	
 	html += '<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>' + 
-			'<td><button id="delete-' + id + '" class="btn btn-danger delete-itinerary">Delete</button></td>' + 
+			'<td class="delete-td">' + 
+				'<div id="delete-div-' + id + '" class="delete-div"><button id="delete-' + id + '" class="btn btn-danger delete-itinerary">Delete</button></div>' + 
+				'<div class="confirm-delete-div" style="text-align: center; display: none;">Are you sure? <br>This cannot be undone.<br>' +
+					'<button id="yes-delete-' + id + '" class="btn btn-danger">Yes, Delete</button><br><br>' + 
+					'<button id="no-cancel-' + id + '" class="btn btn-primary">No, Cancel</button>' +
+				'</div>' + 
+			'</td>' + 
 			'<td class="hidden-id-holder" style="display:none">' + id + '</td>' + 
 		'</tr>';
 		
@@ -52,21 +58,35 @@ $(document).on('click', '.delete-itinerary', function(){
 
 	console.log("Clicked delete-" + itineraryID);
 	
-	var i = 0;
-	var itineraryFound = false;
-	while(!itineraryFound) {
-		if(itineraries[i].id == itineraryID) {
-			itineraryFound = true;
-		}
-		i++;
-	}
-	i--;
-	//remove venue from itinerary
-	itineraries.splice(i, 1);
-	store.set('fourpeople', JSON.stringify(itineraries));
+	var parentTR = $("#itinerary-" + itineraryID);
+	var deleteDiv = parentTR.children('.delete-td').children('.delete-div');
+	var confirmDeleteDiv = parentTR.children('.delete-td').children('.confirm-delete-div');
 	
-	//remove venue from display
-	var tbody = document.getElementById("current-itinerary-holder");
-	var trChild = document.getElementById("itinerary-" + itineraryID);
-	var throwawayNode = tbody.removeChild(trChild);
+	deleteDiv.hide();
+	confirmDeleteDiv.show();
+		
+	$("#no-cancel-" + itineraryID).click(function(){
+		confirmDeleteDiv.hide();
+		deleteDiv.show();
+	});
+	
+	$("#yes-delete-" + itineraryID).click(function() {
+		var i = 0;
+		var itineraryFound = false;
+		while(!itineraryFound) {
+			if(itineraries[i].id == itineraryID) {
+				itineraryFound = true;
+			}
+			i++;
+		}
+		i--;
+		//remove venue from itinerary
+		itineraries.splice(i, 1);
+		store.set('fourpeople', JSON.stringify(itineraries));
+		
+		//remove venue from display
+		var tbody = document.getElementById("current-itinerary-holder");
+		var trChild = document.getElementById("itinerary-" + itineraryID);
+		var throwawayNode = tbody.removeChild(trChild);
+	});
 });
