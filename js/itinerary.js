@@ -222,7 +222,7 @@ var _createVenueInfoColumn = function(venue) {
 	ratingHeader.append(ratingSpan);
 	var ratingColumn = $(document.createElement('td')).append(ratingHeader);
 	// address & category
-	var addressText = $(document.createElement('p')).text(venue.venue.location.address);
+	var addressText = $(document.createElement('p')).text(venue.venue.location.address).css("margin-bottom", "0px");
 	var categoryText = $(document.createElement('p')).text(venue.venue.category.shortName);
 	var addressCategoryDiv = $(document.createElement('div')).addClass('info').append(addressText).append(categoryText);
 	var addressCategoryColumn = $(document.createElement('td')).append(addressCategoryDiv);
@@ -272,24 +272,7 @@ function displayAllVenues() {
 //=============================================================================
 //=============================================================================
 
-$( ".date-picker#date-picker-start" ).datepicker({
-	changeMonth: true,
-	changeYear: true,
-	showButtonPanel: true
-});
-$( ".date-picker#date-picker-end" ).datepicker({
-	changeMonth: true,
-	changeYear: true,
-	showButtonPanel: true
-});
-$(".time-picker#time-picker-start").timePicker({
-	show24Hours: false
-});
-$( ".date-picker#date-picker-end" ).datepicker({
-	changeMonth: true,
-	changeYear: true,
-	showButtonPanel: true
-});
+
 
 // Hide adding venues div at first
 $("#add-venues-content").hide();
@@ -657,7 +640,7 @@ $(document).on('click', '.edit-venue', function(){
 		//TODO: error check with dates too in case repeat venues
 		if(itinerary.itinerary[i].venue.id == editID) {
 			//alert("FOUND IT!");
-			thisVenue = itinerary.itinerary[i].venue;
+			thisVenue = itinerary.itinerary[i];
 			found = true;
 		}
 		i++;
@@ -709,10 +692,31 @@ $(document).on('click', '.edit-venue', function(){
 		
 		//when click "done" hide editing areas and show edit button, new time
 		$("#done-" + thisVenue.id).click(function(){
+			saveVenueAndUpdateItinerary(thisVenue);
 			timeChangeDiv.hide(500, function() {
-				timeDisplayDiv.show(); //TODO: UPDATE TIME
+				
+				//timeDisplayDiv.show(); //TODO: UPDATE TIME
 				editButton.show();
 			});
 		});
 	}
 });
+
+var saveVenueAndUpdateItinerary = function(venueObject) {
+	// Get the venue ID
+	var venueID = venueObject.id;
+	// Now we have to read the datetime picker values...
+	// We have the id, we can read the values from the correct datetime picker 
+	// id="start-date-picker-" + id
+	var startDate = $('#start-date-picker-' + venueID).val();
+	var startTime = $('#start-time-picker-' + venueID).val();
+	var endDate = $('#end-date-picker-' + venueID).val();
+	var endTime = $('#end-time-picker-' + venueID).val();
+	var startDateString = createDateString(startDate, startTime).toString();
+	var endDateString = createDateString(endDate, endTime).toString();
+	// Save the new start and end times to that same venueObject
+	venueObject.startDate = startDateString;
+	venueObject.endDate = endDateString;
+	// Lookup the Foursquare venue and re-sort and display itinerary
+	lookupFoursquareVenue(venueObject, sortAndDisplayItinerary);
+}
