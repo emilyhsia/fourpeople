@@ -1,5 +1,5 @@
 // Dummy London itinerary
-var currentID = 3;
+var nextItineraryID = 3;
 
 var itineraries = 
 [
