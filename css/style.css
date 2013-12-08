@@ -266,6 +266,7 @@ td.time {
 	overflow-y: scroll;
 }
 
+
 .highlight-venue {
 	background-color: lightyellow;
 }
@@ -279,3 +280,11 @@ td.time {
 	left: 50px;
 	z-index: -1;
 }
+
+#venue-table-tbody {
+	border-collapse: separate;
+}
+#venue-table-tbody tr {
+	border-top: 1px solid #dddddd;
+}
+
