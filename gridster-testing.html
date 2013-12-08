@@ -5,7 +5,7 @@
 	<link href="bootstrap/css/bootstrap-theme.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
+   <!-- <link href="css/style.css" rel="stylesheet"> -->
 
 <html>
 	<head>
@@ -19,29 +19,7 @@
 		 <div class="gridster">
         <ul></ul>
     </div>
-	<!--	<section class="demo">
-			<div class="gridster">
-				<ul>
-					<li data-row="1" data-col="1" data-sizex="1" data-sizey="1"><h1>HELLO</h1></li>
-					<li data-row="2" data-col="1" data-sizex="1" data-sizey="1"><h1>WORLD</h1></li>
-					<li data-row="3" data-col="1" data-sizex="1" data-sizey="1"><h1>OR ELSE<h1></li>
 
-					<li data-row="1" data-col="2" data-sizex="2" data-sizey="1"></li>
-					<li data-row="2" data-col="2" data-sizex="2" data-sizey="2"></li>
-
-					<li data-row="1" data-col="4" data-sizex="1" data-sizey="1"></li>
-					<li data-row="2" data-col="4" data-sizex="2" data-sizey="1"></li>
-					<li data-row="3" data-col="4" data-sizex="1" data-sizey="1"></li>				
-
-					<li data-row="1" data-col="5" data-sizex="1" data-sizey="1"></li>
-					<li data-row="3" data-col="5" data-sizex="1" data-sizey="1"></li>
-
-					<li data-row="1" data-col="6" data-sizex="1" data-sizey="1"></li>
-					<li data-row="2" data-col="6" data-sizex="1" data-sizey="2"></li>				
-				</ul>
-			</div>
-		</section>
--->
 
 
 
@@ -154,85 +132,14 @@ itinerary.itinerary.forEach(function(venue){
 $('h1').text(itinerary.name);
 
 var cloudMadeAPIKey = '7da9717aa6e646c2b4d6a6a1fbc94765';
-var displayVenue = function(venue) {
-	var category;
-	venue.venue.categories.forEach(function(cat) {
-		if (cat.primary) {
-			category = cat;
-		}
-	});
-
-	// Each venue is displayed as a single row in a table
-	// Build the row and append to the table body
-	// create icon
-
-	var img = $(document.createElement('img')).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix);
-	var iconColumn = $(document.createElement('td')).addClass('icon').append(img);
-	// venue 
-	var name = $(document.createElement('h4')).addClass('list-group-item-heading').text(venue.venue.name);
-	var rating = $(document.createElement('h3')).append($(document.createElement('span')).addClass('label').addClass('label-success').text(venue.venue.rating)).addClass('rating');
-	var address = $(document.createElement('p')).addClass('list-group-item-text').text(venue.venue.location.address);
-	var categoryLabel = $(document.createElement('p')).text(category.shortName);
-	var venueInfo = $(document.createElement('div')).addClass('info').append(address).append(categoryLabel);
-
-	// rating and venue info table
-	rating = $(document.createElement('td')).append(rating);
-	venueInfo = $(document.createElement('td')).append(venueInfo);
-	var infoTable = $(document.createElement('table')).append($(document.createElement('tbody')).append($(document.createElement('tr')).append(rating).append(venueInfo)));
-	
-	var venueColumn = $(document.createElement('td')).addClass('venue').append(name).append(infoTable);//.append(venueInfo);//.append(categoryLabel);
-	// time
-	var timeColumn = $(document.createElement('td')).addClass('time').text(venue.start + " - " + venue.end);
-	// map - create and append the element to DOM before Leaflet loads it
-	var map = $(document.createElement('div')).addClass('mini-map').attr('id', 'map' + venue.venue.id);
-	var mapEl = $(document.createElement('td')).append(map);
-
-	// append the icon, venue info, time, and map columns to a row element
-	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueColumn).append(timeColumn).append(mapEl);
 
 
-
-	// var leafletMap = L.map('map' + venue.venue.id, {
-	// 	center: [venue.venue.location.lat, venue.venue.location.lng],
-	// 	zoom: 16,
-	// 	dragging: true
-	// });
-	// L.tileLayer('http://{s}.tile.cloudmade.com/' + cloudMadeAPIKey + '/997/256/{z}/{x}/{y}.png', {
-	//     maxZoom: 50
-	// }).addTo(leafletMap);
-	// L.marker([venue.venue.location.lat, venue.venue.location.lng]).addTo(leafletMap);
-
-	// more details
-}
 
 
 var widgets = new Array(5);
 var widCount = 0;
 			   
 
-    // function displayWid(){
-
-      
-    //   var test = '<h2> hi </i>';
-    //   var widgetss = [
-    //       ['<li>' + test + '</li>', 1, 2],
-    //       ['<li>1</li>', 3, 2],
-    //       ['<li>2</li>', 3, 2],
-    //       ['<li>3</li>', 2, 1],
-    //       ['<li>4</li>', 4, 1],
-    //       ['<li>5</li>', 1, 2],
-    //       ['<li>6</li>', 2, 1],
-    //       ['<li>7</li>', 3, 2],
-    //       ['<li>8</li>', 1, 1],
-    //       ['<li>9</li>', 2, 2],
-    //       ['<li>10</li>', 1, 3]
-    //   ];
-
-    //   widgets.forEach(function(i, widget){
-    //       gridster.add_widget.apply(gridster, widget)
-    //   });
-
-    // }
 
 var gridster;
  function makeWid(venue){
@@ -241,19 +148,16 @@ var gridster;
          widget_margins: [5, 5],
           widget_base_dimensions: [600, 200]
       }).data('gridster');
-    //var name = "hello";
-
-    var category;
+    
+    	var category;
 	venue.venue.categories.forEach(function(cat) {
 		if (cat.primary) {
 			category = cat;
 		}
 	});
-
 	// Each venue is displayed as a single row in a table
 	// Build the row and append to the table body
 	// create icon
-
 	var img = $(document.createElement('img')).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix);
 	var iconColumn = $(document.createElement('td')).addClass('icon').append(img);
 	// venue 
@@ -262,6 +166,7 @@ var gridster;
 	var address = $(document.createElement('p')).addClass('list-group-item-text').text(venue.venue.location.address);
 	var categoryLabel = $(document.createElement('p')).text(category.shortName);
 	var venueInfo = $(document.createElement('div')).addClass('info').append(address).append(categoryLabel);
+
 
 	// rating and venue info table
 	rating = $(document.createElement('td')).append(rating);
@@ -278,32 +183,23 @@ var gridster;
 	// append the icon, venue info, time, and map columns to a row element
 	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueColumn).append(timeColumn).append(mapEl);
 
-
-
+	
 	var leafletMap = L.map('map' + venue.venue.id, {
 		center: [venue.venue.location.lat, venue.venue.location.lng],
 		zoom: 16,
-		dragging: false
+		dragging: true
 	});
 	L.tileLayer('http://{s}.tile.cloudmade.com/' + cloudMadeAPIKey + '/997/256/{z}/{x}/{y}.png', {
 	    maxZoom: 50
 	}).addTo(leafletMap);
 	L.marker([venue.venue.location.lat, venue.venue.location.lng]).addTo(leafletMap);
 
-
-
-
-   // var total = '<li>' + name + '</li>';
-    //idgets[widCount] = (total, widCount+1, widCount +1);
-    //console.log(name + widCount);
+ 
     widCount = widCount + 1;
     gridster.add_widget(row, 1, 1, widCount+1, 1);
   }
 
 
-//  $(function(){
-// 	//displayWid();
-// });
 
 
 

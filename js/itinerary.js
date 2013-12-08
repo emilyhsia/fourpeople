@@ -523,6 +523,7 @@ function buildResultPanel(number, name, address, id, category) {
 // Takes the new itinerary, sorts it, and displays everything
 var sortAndDisplayItinerary = function(newVenue) {
 	//sort itinerary first
+
 	sortItinerary();
 	
 	// clear out table
@@ -536,11 +537,41 @@ var sortAndDisplayItinerary = function(newVenue) {
 		displayVenue(venue);
 	});
 
+
 	// highlight the newly added venue and fade out
 	$('#tr-' + newVenue.id).addClass('highlight-venue');
 	setTimeout(function() {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
 	}, 600);
+
+	detectCollision();
+}
+
+function detectCollision(){
+	for (var i = 1; i< itinerary.itinerary.length-1; i++){
+		var beforeStart = (itinerary.itinerary[i-1].startDate);
+		var beforeEnd = (itinerary.itinerary[i-1].endDate);
+		var currentStart = (itinerary.itinerary[i].startDate);
+		var currentEnd = (itinerary.itinerary[i].endDate);
+		var afterStart = (itinerary.itinerary[i+1].startDate);
+		var afterEnd = (itinerary.itinerary[i+1].endDate);
+		console.log("ID " + itinerary.itinerary[i].id);
+
+		if (currentStart < beforeEnd){
+			console.log("COLLISIONTop");
+			//grab tr- id. 
+			//$("#tr-" +(itinerary.itinerary[i].id)).html("Well crap");
+			//alert($("#tr-" +(itinerary.itinerary[i].id)).html());
+			$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+			//$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","4px solid red");
+		} 
+		if (currentEnd > afterStart){
+			console.log("COLLISIONBottom");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .5)");
+		}
+
+	}
+
 }
 
 /*
