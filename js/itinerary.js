@@ -181,6 +181,9 @@ var displayVenue = function(venue) {
 displayAllVenues();
 
 function displayAllVenues() {
+	if(itinerary.itinerary.length > 0) {
+		$("#no-venues-error").hide();
+	}
 	//sort itinerary first
 	itinerary.itinerary.sort(function(a,b) {
 		var dateA = new Date(a.startDate);
