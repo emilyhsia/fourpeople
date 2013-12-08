@@ -105,11 +105,11 @@ var displayVenue = function(venue) {
 	'<form class="form-inline" role="form">' + 
   		'<div class="form-group">' + 
     		'<label class="sr-only" for="start-date-picker-' + venue.id + '">Date</label>' + 
-    		'<input type="date" class="form-control date-picker" id="start-date-picker-' + venue.id + '" placeholder="Date">' + 
+    		'<input type="date" class="start-date-picker form-control date-picker" id="start-date-picker-' + venue.id + '" placeholder="Date">' + 
   		'</div>' + 
  		 '<div class="form-group">' + 
 			'<label class="sr-only" for="start-time-picker-' + venue.id + '">Time</label>' + 
-			'<input type="time" class="form-control time-picker" id="start-time-picker-' + venue.id + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+			'<input type="time" class="start-time-picker form-control time-picker" id="start-time-picker-' + venue.id + '" placeholder="Time" size="10" autocomplete="OFF">' + 
   		'</div>' + 
 	'</form>';
 
@@ -118,11 +118,11 @@ var displayVenue = function(venue) {
 	'<form class="form-inline" role="form">' + 
   		'<div class="form-group">' + 
     		'<label class="sr-only" for="end-date-picker-' + venue.id + '">Date</label>' + 
-    		'<input type="date" class="form-control date-picker" id="end-date-picker-' + venue.id + '" placeholder="Date">' + 
+    		'<input type="date" class="end-date-picker form-control date-picker" id="end-date-picker-' + venue.id + '" placeholder="Date">' + 
   		'</div>' + 
  		 '<div class="form-group">' + 
 			'<label class="sr-only" for="end-time-picker-' + venue.id + '">Time</label>' + 
-			'<input type="time" class="form-control time-picker" id="end-time-picker-' + venue.id + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+			'<input type="time" class="end-time-picker form-control time-picker" id="end-time-picker-' + venue.id + '" placeholder="Time" size="10" autocomplete="OFF">' + 
   		'</div>' + 
 	'</form>';
 
@@ -156,7 +156,6 @@ var displayVenue = function(venue) {
 	$("#start-time-picker-" + venue.id).val(getInputTimeString(venue.startDate));
 	$("#end-date-picker-" + venue.id).val(getCalendarString(venue.endDate));
 	$("#end-time-picker-" + venue.id).val(getInputTimeString(venue.endDate));
-	
 
 	var leafletMap = L.map('map' + venue.venue.id, {
 		center: [venue.venue.location.lat, venue.venue.location.lng],
@@ -194,8 +193,9 @@ var _setVenuePrimaryCategory = function(venueObject) {
 var _createCategoryIconColumn = function(category) {
 	var iconColumn = $(document.createElement('td')).addClass('icon');
 	var iconImg = document.createElement('img');
-	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix);
-	iconColumn.append(iconImg);
+	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix).addClass('img-circle');
+	var timeline = $(document.createElement('div')).addClass("timeline");
+	iconColumn.append(iconImg).append(timeline);
 	return iconColumn;
 }
 
@@ -263,6 +263,7 @@ function displayAllVenues() {
 		$('tbody#venue-table-tbody').append(row);
 		
 		lookupFoursquareVenue(venue, displayVenue);
+
 	});
 }
 
@@ -467,11 +468,11 @@ function buildResultPanel(number, name, address, id, category) {
 	'<form class="form-inline" role="form">' + 
   		'<div class="form-group">' + 
     		'<label class="sr-only" for="start-date-picker-result-' + number + '">Date</label>' + 
-    		'<input type="date" class="start-date-picker-result form-control date-picker" id="start-date-picker-result-' + number + '" placeholder="Date">' + 
+    		'<input type="date" class="start-date-picker-result start-date-picker form-control date-picker" id="start-date-picker-result-' + number + '" placeholder="Date">' + 
   		'</div>' + 
  		 '<div class="form-group">' + 
 			'<label class="sr-only" for="start-time-picker-result-' + number + '">Time</label>' + 
-			'<input type="time" class="start-time-picker-result form-control time-picker" id="start-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+			'<input type="time" class="start-time-picker-result start-time-picker form-control time-picker" id="start-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
   		'</div>' + 
 	'</form>';
 
@@ -480,11 +481,11 @@ function buildResultPanel(number, name, address, id, category) {
 	'<form class="form-inline" role="form">' + 
   		'<div class="form-group">' + 
     		'<label class="sr-only" for="end-date-picker-result-' + number + '">Date</label>' + 
-    		'<input type="date" class="end-date-picker-result form-control date-picker" id="end-date-picker-result-' + number + '" placeholder="Date">' + 
+    		'<input type="date" class="end-date-picker-result end-date-picker form-control date-picker" id="end-date-picker-result-' + number + '" placeholder="Date">' + 
   		'</div>' + 
  		 '<div class="form-group">' + 
 			'<label class="sr-only" for="end-time-picker-result-' + number + '">Time</label>' + 
-			'<input type="time" class="end-time-picker-result form-control time-picker" id="end-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
+			'<input type="time" class="end-time-picker-result end-time-picker form-control time-picker" id="end-time-picker-result-' + number + '" placeholder="Time" size="10" autocomplete="OFF">' + 
   		'</div>' + 
 	'</form>';
 
@@ -720,3 +721,4 @@ var saveVenueAndUpdateItinerary = function(venueObject) {
 	// Lookup the Foursquare venue and re-sort and display itinerary
 	lookupFoursquareVenue(venueObject, sortAndDisplayItinerary);
 }
+

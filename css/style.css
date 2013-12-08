@@ -137,7 +137,9 @@ td {
 }
 
 td.icon {
-	width: 100px;
+	width: 130px;
+	border: none!important;
+	position: relative;
 }
 
 .rating {
@@ -268,3 +270,12 @@ td.time {
 	background-color: lightyellow;
 }
 
+.timeline {
+	width: 5px;
+	background-color: black;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 50px;
+	z-index: -1;
+}
