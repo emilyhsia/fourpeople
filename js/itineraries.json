@@ -1,7 +1,3 @@
-// Dummy London itinerary
-var nextItineraryID = 3;
-
-var itineraries = 
 [
 	{
 		name: "London",
@@ -106,4 +102,4 @@ var itineraries =
 			}
 		]
 	}
-];
+]
