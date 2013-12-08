@@ -264,3 +264,9 @@ td.time {
 	overflow-y: scroll;
 }
 
+#venue-table-tbody {
+	border-collapse: separate;
+}
+#venue-table-tbody tr {
+	border-top: 1px solid #dddddd;
+}
