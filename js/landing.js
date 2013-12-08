@@ -1,18 +1,25 @@
 /** JavaScript functionality for landing page */
 
+store.set('fourpeople', JSON.stringify(itineraries));
+console.log(JSON.parse(store.get('fourpeople')));
+
 // when user clicks create new itinerary, use input
 // as name and create new itinerary
+// rewrite to storage and redirect to new itinerary
 $("#create-new-itinerary").click(function(){
 	var itineraryName = $("#itinerary-name").val();
 	var itineraryID = nextItineraryID;
 	nextItineraryID++;
-	
+
 	itineraries.push({
 		name: itineraryName,
 		id: itineraryID,
 		itinerary: []
 	});
 	
+	store.set('fourpeople', JSON.stringify(itineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+		
 	window.location.href = "itinerary.html?id=" + itineraryID;
 });
 
