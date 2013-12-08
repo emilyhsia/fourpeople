@@ -83,3 +83,11 @@ function addHour(dateString) {
 	fullDate.setTime(fullDate.getTime() + (h*60*60*1000)); 
    	return fullDate; 
 }
+
+/* Displays as such:
+ * Dec 08 2013 
+ */
+function getWordsDateString(dateString) {
+	var parts = dateString.split(" ");
+	return parts[1] + " " + parts[2] + " " + parts[3];
+}
