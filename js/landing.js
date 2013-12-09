@@ -3,13 +3,16 @@
 store.set('fourpeople', JSON.stringify(itineraries));
 console.log(JSON.parse(store.get('fourpeople')));
 
+store.set('fourpeopleID', nextItineraryID);
+
 // when user clicks create new itinerary, use input
 // as name and create new itinerary
 // rewrite to storage and redirect to new itinerary
 $("#create-new-itinerary").click(function(){
 	var itineraryName = $("#itinerary-name").val();
-	var itineraryID = nextItineraryID;
+	var itineraryID = parseInt(store.get('fourpeopleID'));
 	nextItineraryID++;
+	store.set('fourpeopleID', nextItineraryID);
 
 	itineraries.push({
 		name: itineraryName,

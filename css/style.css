@@ -288,3 +288,6 @@ td.time {
 	border-top: 1px solid #dddddd;
 }
 
+#sample-itinerary-table tbody td.edit-venue {
+	display: none;
+}
