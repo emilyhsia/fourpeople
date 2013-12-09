@@ -15,6 +15,16 @@ nextItineraryID = JSON.parse(store.get('fourpeopleID'));
 //TODO: make more robust
 var idEquals = location.search.split("&")[0];
 var itineraryID = parseInt(idEquals.split("=")[1]);
+
+//if sample itinerary, redirect to sample page (non-edit)
+if(itineraryID <= numSamples && location.href.indexOf("sample-itinerary.html") == -1 ) {
+	window.location.href = "sample-itinerary.html?id=" + itineraryID;
+}
+//if not sample itinerary and accidentally on sample page, redirect to regular 
+if(itineraryID > numSamples && location.href.indexOf("sample-itinerary.html") != -1 ) {
+	window.location.href = "itinerary.html?id=" + itineraryID;
+}
+
 var n = 0;
 var foundItinerary = false;
 var itinerary = null;
@@ -27,7 +37,7 @@ while(!foundItinerary && n < itineraries.length) {
 	n++;
 }
 
-// TODO
+// TODO: make it cooler
 if(!foundItinerary) {
 	var toDisplay = '<h1>Oops, this is embarrassing!</h1>' + 
 					'<h3>We could not find your itinerary.</h3>' + 
