@@ -28,7 +28,7 @@ function buildItineraryDiv(itinerary) {
 	}
 	
 	var html = '<tr id="itinerary-' + id + '">' + 
-			'<td><h3>'+ name + ( (id < 3) ? ' (Sample)' : '') + '</h3></td>';
+			'<td><h3>'+ name + ( (id < numSamples + 1) ? ' (Sample)' : '') + '</h3></td>';
 	if(venuesExist) {
 		html +=	'<td>' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  ' to ' + 
 			getWordsDateString(endDate) + ' at ' + getDisplayTimeString(endDate) +  '</td>';
@@ -36,8 +36,9 @@ function buildItineraryDiv(itinerary) {
 		html += '<td> (No venues yet) </td>';
 	}
 	
-	html += '<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>' + 
-			'<td class="delete-td">' + 
+	html += (id < numSamples + 1) ? '<td><a href="sample-itinerary.html?id=' + id + '"><button id="view-' + id + '" class="btn btn-info">View</button></a></td>' :
+									'<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>';
+	html += '<td class="delete-td">' + 
 				'<div id="delete-div-' + id + '" class="delete-div"><button id="delete-' + id + '" class="btn btn-danger delete-itinerary">Delete</button></div>' + 
 				'<div class="confirm-delete-div" style="text-align: center; display: none;">Are you sure? <br>This cannot be undone.<br>' +
 					'<button id="yes-delete-' + id + '" class="btn btn-danger">Yes, Delete</button><br><br>' + 
