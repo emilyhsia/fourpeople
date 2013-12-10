@@ -15,7 +15,7 @@ $(function(){
           '<ul class="nav navbar-nav">' +
             '<li id="home-tab-li"><a href="existing-itineraries.html">Home</a></li>' +
             '<li id="about-tab-li"><a href="about.html">About</a></li>' +
-            '<li id="help-tab-li"><a href="help.html">Help</a></li>' +
+            '<li id="help-tab-li"><a href="UserManual.pdf" target="_blank">Help</a></li>' +
           '</ul>' +
         '</div><!--/.nav-collapse -->' +
       '</div>';
