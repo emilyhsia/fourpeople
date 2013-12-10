@@ -75,6 +75,7 @@
 	
 	<script type="text/javascript">
 	$(function(){
+		$("#itinerary-title").html(itinerary.name);
 		$("#use-itinerary").click(function(){
 			var itineraryName = itinerary.name + " (Copy)";
 			var itineraryID = parseInt(store.get('fourpeopleID'));
