@@ -65,6 +65,9 @@ if(!foundItinerary) {
 //=============================================================================
 //=============================================================================
 
+//set printer button
+$("#printer-view-ahref").attr('href', 'printer-view.html?id='+itinerary.id);
+
 $('h1#itinerary-title span#itinerary-title-name').text(itinerary.name);
 $('h1#itinerary-title span#itinerary-title-id').text('(id: ' + itinerary.id + ')');
 $('#itinerary-name').val(itinerary.name);
@@ -76,9 +79,7 @@ $('#confirm-delete-info').hide();
 // if click "edit name," show editing input/buttons
 $("#edit-itinerary-name").click(function(){
 	$('h1#itinerary-title').hide();
-	$('#edit-itinerary-name').hide();
 	$('#itinerary-title-action-buttons').hide();
-	$('#delete-itinerary').hide();
 	$('#itinerary-name').val(itinerary.name);
 	$('#itinerary-name').show();
 	$('#save-itinerary-name').show();
@@ -92,8 +93,6 @@ $('#cancel-save-itinerary-name').click(function() {
 	$('#itinerary-title-action-buttons').show();
 	$('#cancel-save-itinerary-name').hide();
 	$('h1#itinerary-title').show();
-	$('#edit-itinerary-name').show();
-	$('#delete-itinerary').show();
 
 });
 
@@ -107,8 +106,6 @@ $('#save-itinerary-name').click(function() {
 	itinerary.name = $('#itinerary-name').val();
 	$('h1#itinerary-title span#itinerary-title-name').html(itinerary.name);
 	$('h1#itinerary-title').show();
-	$('#edit-itinerary-name').show();
-	$('#delete-itinerary').show();
 	
 	// store new itinerary name
 	storeItinerary();
@@ -116,8 +113,6 @@ $('#save-itinerary-name').click(function() {
 
 // if click "delete," make user confirm first
 $("#delete-itinerary").click(function() {
-	$('#edit-itinerary-name').hide();
-	$('#delete-itinerary').hide();
 	$('#confirm-delete-info').show();
 	$('#yes-delete-this-itinerary').show();
 	$('#no-cancel-this-delete').show();
@@ -128,8 +123,6 @@ $('#no-cancel-this-delete').click(function(){
 	$('#yes-delete-this-itinerary').hide();
 	$('#no-cancel-this-delete').hide();
 	$('#confirm-delete-info').hide();
-	$('#edit-itinerary-name').show();
-	$('#delete-itinerary').show();
 });
 
 // if click yes, delete, then delete itinerary and redirect to existing itineraries
@@ -271,7 +264,8 @@ var displayVenue = function(venue) {
 	var leafletMap = L.map('map' + venue.venue.id, {
 		center: [venue.venue.location.lat, venue.venue.location.lng],
 		zoom: 16,
-		dragging: true
+		dragging: true,
+		scrollWheelZoom: false
 	});
 	L.tileLayer('http://{s}.tile.cloudmade.com/' + cloudMadeAPIKey + '/997/256/{z}/{x}/{y}.png', {
 	    maxZoom: 50
@@ -427,9 +421,15 @@ var showAddVenuesPanel = function() {
 
 	//$('.timeChange').hide();
 	//$('.timeDisplay').show();
-	$("#itinerary-content").animate({
-       width: '50%'
-    }, { duration: durLength, queue: false });
+	if(document.body.offsetWidth > 1024) {
+		$("#itinerary-content").animate({
+		   width: '50%'
+		}, { duration: durLength, queue: false });
+	} else {
+		$("#itinerary-content").animate({
+		   width: '58%'
+		}, { duration: durLength, queue: false });
+	}
     $("#add-venues-content").show({
 		effect: "slide",
 		duration: 400,
@@ -474,11 +474,6 @@ function clearOldSearch() {
 	$("#add-venue-error-holder").css("display", "none");
 	$("#search-results").html(" ");
 }
-
-// TODO: printer-friendly itinerary version
-$("#printer-view").click(function(){
-	alert("Coming soon :)");
-});
 
 // Gathers parameters and sends search request to Foursquare API
 $("#search-for-venues").click(function() {
@@ -585,7 +580,7 @@ function showResults(venues) {
 		var mapID = 'panel-map-' + i;
 		var lat = venues[i].location.lat;
 		var lng = venues[i].location.lng;
-		var map = L.map(mapID).setView([lat, lng], 16);
+		var map = L.map(mapID, {scrollWheelZoom: false}).setView([lat, lng], 16);
 		L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			attribution: '',
 			maxZoom: 18
