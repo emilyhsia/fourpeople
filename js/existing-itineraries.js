@@ -151,3 +151,28 @@ $(document).on('click', '.copy-itinerary', function(){
 		
 	window.location.href = "itinerary.html?id=" + itineraryID;
 });
+
+
+// if click creat3 new button, create new itinerary and redirect to page
+$(document).on('click', '#create-new', function(){
+	console.log("click");
+	var copyButtonEl = event.target;
+	var itineraryID = $(copyButtonEl).attr('id').split("-")[1];
+	
+	var itineraryName = "My Kickass Itinerary";
+	var itineraryID = parseInt(store.get('fourpeopleID'));
+	nextItineraryID++;
+	store.set('fourpeopleID', nextItineraryID);
+	var venues = new Array(0);
+	
+	itineraries.push({
+		name: itineraryName,
+		id: itineraryID,
+		itinerary: venues
+	});
+	
+	store.set('fourpeople', JSON.stringify(itineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+		
+	window.location.href = "itinerary.html?id=" + itineraryID;
+});
