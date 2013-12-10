@@ -289,7 +289,7 @@ td.time {
 }
 
 #venue-table-tbody {
-	border-collapse: separate;
+	/*border-collapse: separate;*/
 }
 #venue-table-tbody tr.border {
 	border-top: 1px solid #dddddd;
@@ -314,3 +314,15 @@ h4.list-group-item-heading {
 	display: none;
 }
 
+.about {
+	margin-left: auto;
+	margin-right: auto;
+	width: 70%;
+	text-align:center
+
+}
+
+.about-passages {
+	font-size: 22px;
+	color: #969696;
+}
