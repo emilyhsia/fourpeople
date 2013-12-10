@@ -223,12 +223,12 @@ var displayVenue = function(venue) {
   		'</div>' + 
 	'</form>';
 
-	
+	var timeChangeStatusHolder = '<div class="alert" id="datetime-status-holder-venue-' + venue.id + '" style="display: none;"></div>';
 	var doneButton = '<button class="btn btn-primary btn-sm" id="done-' + venue.id + '">Save</button>';
 	var deleteButton = '<button class="btn btn-danger btn-sm" id="delete-' + venue.id + '">Delete</button>';
 	var buttonGroup = $(document.createElement('div')).html(doneButton + deleteButton);
 	buttonGroup.css("margin-top", "10px");
-	var timeChange = $(document.createElement('div')).addClass('timeChange').html(startTimeChangeHTML + endTimeChangeHTML).append(buttonGroup);
+	var timeChange = $(document.createElement('div')).addClass('timeChange').html(timeChangeStatusHolder + startTimeChangeHTML + endTimeChangeHTML).append(buttonGroup);
 
 	// Confirm delete
 	var confirmDeleteHTML = 'Are you sure you want to delete?<br> This cannot be undone.<br><br>' + 
@@ -346,6 +346,8 @@ var _createVenueInfoColumn = function(venue) {
 // display itinerary on page load
 displayAllVenues();
 
+
+
 function displayAllVenues() {
 	if(itinerary.itinerary.length > 0) {
 		$("#no-venues-error").hide();
@@ -363,8 +365,20 @@ function displayAllVenues() {
 	});
 	//empty table
 	$("#venue-table-tbody").html(" ");
+	var lastDate = "";
+	console.log('lastDate: ' + lastDate);
 	//display all venues
 	itinerary.itinerary.forEach(function(venue){
+		// Check if it's a different day
+		if (isDifferentDay(lastDate, venue.startDate)) {
+			var wordsDate = getWordsDateString(venue.startDate);
+			var dateRow = $(document.createElement('tr')).attr("id", "tr-date-" + wordsDate).addClass('tr-date');
+			var dateHeader = '<div><h2 class="list-group-item-heading"><span class="label label-info">' + wordsDate + '</span></h2></div>'
+			//var timeline = '<div class="timeline"></div>';
+			dateRow.html(dateHeader);
+			$('tbody#venue-table-tbody').append(dateRow);
+			lastDate = venue.startDate;
+		}
 		// create and append tr element before lookup, async call might mess up order
 		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
 		//var expand = $(document.createElement('tr')).attr("id", "tr-expand-" + venue.id);
@@ -375,6 +389,8 @@ function displayAllVenues() {
 
 	});
 }
+
+
 
 //=============================================================================
 //=============================================================================
@@ -432,7 +448,7 @@ $("#hide-add-venues").click(function() {
 function clearOldSearch() {
 	$("#query").val("");
 	$("#location").val("");
-	$("#error-holder").css("display", "none");
+	$("#add-venue-error-holder").css("display", "none");
 	$("#search-results").html(" ");
 }
 
@@ -444,7 +460,7 @@ $("#printer-view").click(function(){
 // Gathers parameters and sends search request to Foursquare API
 $("#search-for-venues").click(function() {
 	//error checking first - must have venue name and geocode for search
-	$("#error-holder").css("display","none");
+	$("#add-venue-error-holder").css("display","none");
 	var error = "";
 	var query = $("#query").val();
 	var location = $("#location").val();
@@ -456,9 +472,9 @@ $("#search-for-venues").click(function() {
 	}
 	
 	//set error to hold either "" or new error(s)
-	$("#error-holder").html(error);
+	$("#add-venue-error-holder").html(error);
 	if(error != ""){
-		$("#error-holder").css("display","block");
+		$("#add-venue-error-holder").css("display","block");
 	}
 	
 	// if no errors, send search request and parse results
@@ -616,6 +632,7 @@ function buildResultPanel(number, name, address, id, category) {
             '</div>' +
             '<div class="panel-set-time style="display:none"><table>' + 
             	'<tr>' + 
+            		'<div class="alert" id="datetime-status-holder-result-' + number + '" style="display: none;"></div>' +
             		'<td style="width:400px">' + startTimeSetHTML + endTimeSetHTML + '</td>' + 
             		'<td><div class="panel-add-button btn btn-lg btn-primary" id="add-button-result-' + number + '">+<br>Add<br>' + 
             				'<span class="hidden-venue-id">' + id + '</span></div>' +
@@ -647,9 +664,13 @@ var sortAndDisplayItinerary = function(newVenue) {
 
 	// highlight the newly added venue and fade out
 	$('#tr-' + newVenue.id).addClass('highlight-venue');
+	var top = $('#tr-' + newVenue.id).offset().top;
+	$('html, body').animate({
+        scrollTop: $('#tr-' + newVenue.id).offset().top
+    }, 1500);
 	setTimeout(function() {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
-	}, 600);
+	}, 2100);
 
 	detectCollision();
 }
@@ -712,22 +733,76 @@ $(document).on('click', '.panel-add-button', function(){
 	// First get the result number from button ID: id="add-button-result-' + number
 	var buttonID = $(addButtonEl).attr('id');
 	var resultNo = buttonID.split("-")[3];
+	// Now that we have the number, we can clear the correct error message holder
+	var statusHolderID = "#datetime-status-holder-result-" + resultNo;
+	clearStatusHolder(statusHolderID); 
 	// Now that we have the number, we can read the values from the correct datetime picker 
 	// id="start-date-picker-result-" + number
 	var startDate = $('#start-date-picker-result-' + resultNo).val();
-
 	var startTime = $('#start-time-picker-result-' + resultNo).val();
 	console.log(startDate + " time: " + startTime);
 	var endDate = $('#end-date-picker-result-' + resultNo).val();
 	var endTime = $('#end-time-picker-result-' + resultNo).val();
 	var startDateString = createDateString(startDate, startTime).toString();
 	var endDateString = createDateString(endDate, endTime).toString();
-	// create new venue object and directly add it to the itinerary object
-	var venue = createVenueObject(venueID, startDateString, endDateString);
-	itinerary.itinerary.push(venue);
-	// Lookup the Foursquare venue and re-sort and display itinerary
-	lookupFoursquareVenue(venue, sortAndDisplayItinerary);
+	var message = detectDateTimeStatus(startDateString, endDateString);
+	if (message != "Venue added!") { 
+		// If we detected an error, display error message and don't take any action
+		displayErrorMessage(statusHolderID, message);
+	} else {
+		// create new venue object and directly add it to the itinerary object
+		var venue = createVenueObject(venueID, startDateString, endDateString);
+		itinerary.itinerary.push(venue);
+		// Lookup the Foursquare venue and re-sort and display itinerary
+		lookupFoursquareVenue(venue, sortAndDisplayItinerary);
+		displaySuccessMessage(statusHolderID, message);
+	}
+	
 });
+
+/*
+ * Display error message, given the "#status-holder-id" and the error message
+ */
+var displayErrorMessage = function(statusHolderID, message) {
+	$(statusHolderID).html(message);
+	$(statusHolderID).removeClass('alert-success').addClass('alert-danger');
+	$(statusHolderID).css("display", "block");
+}
+
+/*
+ * Display success message, given the "#status-holder-id" and the success message
+ */
+var displaySuccessMessage = function(statusHolderID, message) {
+	$(statusHolderID).html(message);
+	$(statusHolderID).removeClass('alert-danger').addClass('alert-success');
+	$(statusHolderID).css("display", "block");
+}
+
+/*
+ * Clears the status message given the status holder ID "#status-holder-id"
+ */
+var clearStatusHolder = function(statusHolderID) {
+	$(statusHolderID).css("display", "none");
+}
+
+/*
+ * Checks the start/end dates and returns either a success or error message
+ */
+var detectDateTimeStatus = function(startDate, endDate) {
+	var start = new Date(startDate);
+	var end = new Date(endDate);
+	var today = new Date();
+	var message = "";
+	if (start < today || end < today) {
+		//message = "Sorry! We don't support trips to the past yet."
+		message = "Venue added!";
+	} else if (start > end) {
+		message = "Whoops! Your start time is after your end time.";
+	} else {
+		message = "Venue added!";
+	}
+	return message;
+}
 
 /* 
  * Clear search clicked
@@ -825,22 +900,50 @@ $(document).on('click', '.edit-venue', function(){
 				//remove venue from display
 				var tbody = document.getElementById("venue-table-tbody");
 				var trChild = document.getElementById("tr-" + thisVenue.id);
-				var throwawayNode = tbody.removeChild(trChild);
+				$(trChild).hide(600, function() {
+					var throwawayNode = tbody.removeChild(trChild);
+				});
+				
 			});
 		});
 		
 		//when click "done" hide editing areas and show edit button, new time
 		$("#done-" + thisVenue.id).click(function(){
-			saveVenueAndUpdateItinerary(thisVenue);
-			timeChangeDiv.hide(500, function() {
-				
-				//timeDisplayDiv.show(); //TODO: UPDATE TIME
-				editButton.show();
-			});
+			var venueID = thisVenue.id;
+			// Before we do anything, first check if valid date/time values
+			var startDatePickerID = '#start-date-picker-' + venueID;
+			var startTimePickerID = '#start-time-picker-' + venueID;
+			var endDatePickerID = '#end-date-picker-' + venueID;
+			var endTimePickerID = '#end-time-picker-' + venueID;
+			var startDateString = getDateTimeInput(startDatePickerID, startTimePickerID);
+			var endDateString = getDateTimeInput(endDatePickerID, endTimePickerID);
+			console.log(startDateString + " " + endDateString);
+			var message = detectDateTimeStatus(startDateString, endDateString);
+			// If we detected an error, display the error message and don't take any action
+			if (message != "Venue added!") {
+				var statusHolderID = "#datetime-status-holder-venue-" + venueID;
+				displayErrorMessage(statusHolderID, message);
+			}
+			else { // It's all good, go on and save the change and update
+				saveVenueAndUpdateItinerary(thisVenue);
+				timeChangeDiv.hide(500, function() {
+					//timeDisplayDiv.show(); //TODO: UPDATE TIME
+					editButton.show();
+				});
+			}
+			
 		});
 	}
 });
 
+/*
+ * Gets and returns the dateString from a date/time input pair
+ */
+var getDateTimeInput = function(datePickerID, timePickerID) {
+	var date = $(datePickerID).val();
+	var time = $(timePickerID).val();
+	return createDateString(date, time).toString();
+}
 
 var saveVenueAndUpdateItinerary = function(venueObject) {
 	// Get the venue ID
@@ -854,10 +957,13 @@ var saveVenueAndUpdateItinerary = function(venueObject) {
 	var endTime = $('#end-time-picker-' + venueID).val();
 	var startDateString = createDateString(startDate, startTime).toString();
 	var endDateString = createDateString(endDate, endTime).toString();
+
 	// Save the new start and end times to that same venueObject
 	venueObject.startDate = startDateString;
 	venueObject.endDate = endDateString;
+	console.log(venueObject.startDate + " end: " + venueObject.endDate);
 	// Lookup the Foursquare venue and re-sort and display itinerary
 	lookupFoursquareVenue(venueObject, sortAndDisplayItinerary);
+	
 }
 

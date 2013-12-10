@@ -91,3 +91,20 @@ function getWordsDateString(dateString) {
 	var parts = dateString.split(" ");
 	return parts[1] + " " + parts[2] + " " + parts[3];
 }
+
+/*
+ * Compares two different dateStrings to determine if the YYYY-MM-DD is different
+ */
+function isDifferentDay(a, b) {
+	if (a == "") {
+		return true;
+	}
+	var aYYYYMMDD = getCalendarString(a).split("-");
+	var bYYYYMMDD = getCalendarString(b).split("-");
+	for (var i = 0; i < 3; i++) {
+		if (aYYYYMMDD[i] != bYYYYMMDD[i]) {
+			return true;
+		}
+	}
+	return false;
+}
