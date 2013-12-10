@@ -65,7 +65,8 @@ if(!foundItinerary) {
 //=============================================================================
 //=============================================================================
 
-$('h1#itinerary-title').text(itinerary.name);
+$('h1#itinerary-title span#itinerary-title-name').text(itinerary.name);
+$('h1#itinerary-title span#itinerary-title-id').text('(id: ' + itinerary.id + ')');
 $('#itinerary-name').val(itinerary.name);
 $('#itinerary-name').hide();
 $('#save-itinerary-name').hide();
@@ -104,7 +105,7 @@ $('#save-itinerary-name').click(function() {
 	$('#cancel-save-itinerary-name').hide();
 	$('#itinerary-title-action-buttons').show();
 	itinerary.name = $('#itinerary-name').val();
-	$('h1#itinerary-title').html(itinerary.name);
+	$('h1#itinerary-title span#itinerary-title-name').html(itinerary.name);
 	$('h1#itinerary-title').show();
 	$('#edit-itinerary-name').show();
 	$('#delete-itinerary').show();
@@ -383,14 +384,14 @@ function displayAllVenues() {
 	//empty table
 	$("#venue-table-tbody").html(" ");
 	var lastDate = "";
-	console.log('lastDate: ' + lastDate);
 	//display all venues
 	itinerary.itinerary.forEach(function(venue){
 		// Check if it's a different day
 		if (isDifferentDay(lastDate, venue.startDate)) {
 			var wordsDate = getWordsDateString(venue.startDate);
 			var dateRow = $(document.createElement('tr')).attr("id", "tr-date-" + wordsDate).addClass('tr-date');
-			var dateHeader = '<div><h2 class="list-group-item-heading"><span class="label label-info">' + wordsDate + '</span></h2></div>'
+			var dateHeader = '<div><h2 class="list-group-item-heading"><span class="label label-info">' + wordsDate + '</span></h2></div>';
+			//var floatingDateHeader = '<div id="floating-date-' + wordsDate + '"><h2 class="list-group-item-heading"><span class="label label-info">' + wordsDate + '</span></h2></div>';
 			//var timeline = '<div class="timeline"></div>';
 			dateRow.html(dateHeader);
 			$('tbody#venue-table-tbody').append(dateRow);
@@ -406,7 +407,6 @@ function displayAllVenues() {
 
 	});
 }
-
 
 
 //=============================================================================
@@ -699,7 +699,20 @@ var sortAndDisplayItinerary = function(newVenue) {
 	$("#venue-table-tbody").html(" ");
 	
 	//go through everything in itinerary and re-display
+	var lastDate = "";
 	itinerary.itinerary.forEach(function(venue){
+		// Check if it's a different day
+		if (isDifferentDay(lastDate, venue.startDate)) {
+			var wordsDate = getWordsDateString(venue.startDate);
+			var dateRow = $(document.createElement('tr')).attr("id", "tr-date-" + wordsDate).addClass('tr-date');
+			var dateHeader = '<div><h2 class="list-group-item-heading"><span class="label label-info">' + wordsDate + '</span></h2></div>';
+			//var floatingDateHeader = '<div id="floating-date-' + wordsDate + '"><h2 class="list-group-item-heading"><span class="label label-info">' + wordsDate + '</span></h2></div>';
+			//var timeline = '<div class="timeline"></div>';
+			dateRow.html(dateHeader);
+			$('tbody#venue-table-tbody').append(dateRow);
+			lastDate = venue.startDate;
+		}
+
 		// First create and append tr element before lookup, async call might mess up order
 		var row = $(document.createElement('tr')).attr("id", "tr-" + venue.id);
 		$('tbody#venue-table-tbody').append(row);
@@ -739,7 +752,7 @@ function detectCollision(){
 			} 
 			if (currentEnd > afterStart){
 				console.log("COLLISIONBottom");
-				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
 			}
 
 		}
@@ -748,8 +761,8 @@ function detectCollision(){
 		var secondStart = itinerary.itinerary[1].startDate;
 		if(secondStart < firstEnd) {
 			console.log("COLLISIONSingle");
-			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
-			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","1px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
 		}
 	}
 }
@@ -792,33 +805,45 @@ $(document).on('click', '.panel-add-button', function(){
 	// Get the venue ID
 	var venueID = $(addButtonEl).children("span.hidden-venue-id").text();
 
-	// Now we have to read the datetime picker values...
 	// First get the result number from button ID: id="add-button-result-' + number
 	var buttonID = $(addButtonEl).attr('id');
 	var resultNo = buttonID.split("-")[3];
 	// Now that we have the number, we can clear the correct error message holder
 	var statusHolderID = "#datetime-status-holder-result-" + resultNo;
-	clearStatusHolder(statusHolderID); 
-	// Now that we have the number, we can read the values from the correct datetime picker 
-	// id="start-date-picker-result-" + number
-	var startDate = $('#start-date-picker-result-' + resultNo).val();
-	var startTime = $('#start-time-picker-result-' + resultNo).val();
-	var endDate = $('#end-date-picker-result-' + resultNo).val();
-	var endTime = $('#end-time-picker-result-' + resultNo).val();
-	var startDateString = createDateString(startDate, startTime).toString();
-	var endDateString = createDateString(endDate, endTime).toString();
-	var message = detectDateTimeStatus(startDateString, endDateString);
-	if (message != "Venue added!") { 
-		// If we detected an error, display error message and don't take any action
-		displayErrorMessage(statusHolderID, message);
+
+	// First make sure the venue hasn't already been added
+	// ie if it already has a row on the itinerary table
+	var $trSelector = $('#tr-' + venueID);
+	console.log($trSelector);
+	if ($trSelector.length > 0) {
+		displayErrorMessage(statusHolderID, "Whoops! You've already added this venue");
 	} else {
-		// create new venue object and directly add it to the itinerary object
-		var venue = createVenueObject(venueID, startDateString, endDateString);
-		itinerary.itinerary.push(venue);
-		// Lookup the Foursquare venue and re-sort and display itinerary
-		lookupFoursquareVenue(venue, sortAndDisplayItinerary);
-		displaySuccessMessage(statusHolderID, message);
+		// Now we have to read the datetime picker values...
+		
+		clearStatusHolder(statusHolderID); 
+		// Now that we have the number, we can read the values from the correct datetime picker 
+		// id="start-date-picker-result-" + number
+		var startDate = $('#start-date-picker-result-' + resultNo).val();
+		var startTime = $('#start-time-picker-result-' + resultNo).val();
+		var endDate = $('#end-date-picker-result-' + resultNo).val();
+		var endTime = $('#end-time-picker-result-' + resultNo).val();
+		var startDateString = createDateString(startDate, startTime).toString();
+		var endDateString = createDateString(endDate, endTime).toString();
+		var message = detectDateTimeStatus(startDateString, endDateString);
+		if (message != "Venue added!") { 
+			// If we detected an error, display error message and don't take any action
+			displayErrorMessage(statusHolderID, message);
+		} else {
+			// create new venue object and directly add it to the itinerary object
+			var venue = createVenueObject(venueID, startDateString, endDateString);
+			itinerary.itinerary.push(venue);
+			// Lookup the Foursquare venue and re-sort and display itinerary
+			lookupFoursquareVenue(venue, sortAndDisplayItinerary);
+			displaySuccessMessage(statusHolderID, message);
+		}
 	}
+
+	
 	
 });
 
@@ -966,11 +991,11 @@ $(document).on('click', '.edit-venue', function(){
 				$(trChild).hide(600, function() {
 					var throwawayNode = tbody.removeChild(trChild);
 				});
+				storeItinerary();
 				
 			});
 
 				var throwawayNode = tbody.removeChild(trChild);
-				
 				//store new itinerary
 				storeItinerary();
 				

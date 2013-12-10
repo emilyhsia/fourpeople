@@ -35,12 +35,13 @@ function buildItineraryDiv(itinerary) {
 	// start off row with id=itinerary-##, then add title
 	// add '(Sample)' if sample itinerary
 	var html = '<tr id="itinerary-' + id + '">' + 
-					'<td><h3>'+ name + ( (id <= numSamples) ? ' (Sample)' : '') + '</h3></td>';
+					'<td><h3>'+ name + ( (id <= numSamples) ? ' (Sample)' : '') + '</h3></td>' + 
+					'<td>(id: ' + id + ')</td>';
 					
 	//if there are venues, display start time and end time;
 	//otherwise, just say no venues
 	if(venuesExist) {
-		html +=	'<td>' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  ' to ' + 
+		html +=	'<td style="text-align:center;">' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  '<br> to <br>' + 
 			getWordsDateString(endDate) + ' at ' + getDisplayTimeString(endDate) +  '</td>';
 	} else {
 		html += '<td> (No venues yet) </td>';
