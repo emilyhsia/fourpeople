@@ -47,6 +47,7 @@ while(!foundItinerary && n < itineraries.length) {
 	}
 	n++;
 }
+n--;
 
 // TODO: make this error message cooler
 if(!foundItinerary) {
@@ -106,6 +107,9 @@ $('#save-itinerary-name').click(function() {
 	$('h1#itinerary-title').show();
 	$('#edit-itinerary-name').show();
 	$('#delete-itinerary').show();
+	
+	// store new itinerary name
+	storeItinerary();
 });
 
 // if click "delete," make user confirm first
@@ -296,11 +300,16 @@ var _setVenuePrimaryCategory = function(venueObject) {
  * @type helper
  */
 var _createCategoryIconColumn = function(category) {
-	var iconColumn = $(document.createElement('td')).addClass('icon');
-	var iconImg = document.createElement('img');
-	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix).addClass('img-circle');
-	var timeline = $(document.createElement('div')).addClass("timeline");
-	iconColumn.append(timeline).append(iconImg);
+	var iconColumn;
+	if(category != null){
+		var iconColumn = $(document.createElement('td')).addClass('icon');
+		var iconImg = document.createElement('img');
+		$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix).addClass('img-circle');
+		var timeline = $(document.createElement('div')).addClass("timeline");
+		iconColumn.append(timeline).append(iconImg);
+	} else {
+		iconColumn = "<td></td>";
+	}
 	return iconColumn;
 }
 
@@ -328,7 +337,12 @@ var _createVenueInfoColumn = function(venue) {
 	var ratingColumn = $(document.createElement('td')).append(ratingHeader);
 	// address & category
 	var addressText = $(document.createElement('p')).text(venue.venue.location.address).css("margin-bottom", "0px");
-	var categoryText = $(document.createElement('p')).text(venue.venue.category.shortName);
+	var categoryText;
+	if(venue.venue.category != null) { 
+		$(document.createElement('p')).text(venue.venue.category.shortName);
+	} else {
+		$(document.createElement('p')).text("(No category)");
+	}
 	var addressCategoryDiv = $(document.createElement('div')).addClass('info').append(addressText).append(categoryText);
 	var addressCategoryColumn = $(document.createElement('td')).append(addressCategoryDiv);
 	// rating and venue info table
@@ -572,6 +586,7 @@ function showResults(venues) {
 		var id = $(this).find('.hidden-venue-id').text();
 		$(this).siblings('.panel-set-time').toggle(400);
 	});
+	
 
 }
 
@@ -580,13 +595,26 @@ function showResults(venues) {
  * is the end date/time of the very last venue on the itinerary.
  */
 function getNextAvailableTime() {
-	var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
-	return lastVenue.endDate;		//TODO: if no venues!
+	if(itinerary.itinerary.length > 0) {
+		var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
+		return lastVenue.endDate;
+	} else {
+		var now = new Date(Date.now());
+		now.setMinutes(0);
+		return now;
+	}
 }
 
 // Builds the panel for a single search result
 function buildResultPanel(number, name, address, id, category) {
-	var icon = category.icon.prefix + "bg_88" + category.icon.suffix;
+	var category = [];
+	var icon = "";
+	if(category.icon != null) {
+		icon = category.icon.prefix + "bg_88" + category.icon.suffix;
+	} else {
+		category.name = "(No category)";
+	}
+	
 
 	var startTimeSetHTML = 
 	'<span width="400px;"><b>Start</b></span>' + 
@@ -648,6 +676,9 @@ function buildResultPanel(number, name, address, id, category) {
 
 // Takes the new itinerary, sorts it, and displays everything
 var sortAndDisplayItinerary = function(newVenue) {
+	// hide no-venues-error, just in case was showing from empty
+	$("#no-venues-error").hide();
+	
 	//sort itinerary first
 	sortItinerary();
 	
@@ -672,33 +703,52 @@ var sortAndDisplayItinerary = function(newVenue) {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
 	}, 2100);
 
+	//see if any time overlaps
 	detectCollision();
+	
+	// store new itinerary
+	storeItinerary();
 }
 
+//TODO: debug
 function detectCollision(){
-	for (var i = 1; i< itinerary.itinerary.length-1; i++){
-		var beforeStart = (itinerary.itinerary[i-1].startDate);
-		var beforeEnd = (itinerary.itinerary[i-1].endDate);
-		var currentStart = (itinerary.itinerary[i].startDate);
-		var currentEnd = (itinerary.itinerary[i].endDate);
-		var afterStart = (itinerary.itinerary[i+1].startDate);
-		var afterEnd = (itinerary.itinerary[i+1].endDate);
-		console.log("ID " + itinerary.itinerary[i].id);
+	if(itinerary.itinerary.length > 2) {
+		for (var i = 1; i< itinerary.itinerary.length-1; i++){
+			var beforeEnd = (itinerary.itinerary[i-1].endDate);
+			var currentStart = (itinerary.itinerary[i].startDate);
+			var currentEnd = (itinerary.itinerary[i].endDate);
+			var afterStart = (itinerary.itinerary[i+1].startDate);
+		
 
-		if (currentStart < beforeEnd){
-			console.log("COLLISIONTop");
-			//grab tr- id. 
-			//$("#tr-" +(itinerary.itinerary[i].id)).html("Well crap");
-			//alert($("#tr-" +(itinerary.itinerary[i].id)).html());
-			$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
-			//$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","4px solid red");
-		} 
-		if (currentEnd > afterStart){
-			console.log("COLLISIONBottom");
-				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .5)");
+			if (currentStart < beforeEnd){
+				console.log("COLLISIONTop");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+			} 
+			if (currentEnd > afterStart){
+				console.log("COLLISIONBottom");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
+			}
+
 		}
-
+	} else if(itinerary.itinerary.length == 2) {
+		var firstEnd = itinerary.itinerary[0].endDate;
+		var secondStart = itinerary.itinerary[1].startDate;
+		if(secondStart < firstEnd) {
+			console.log("COLLISIONSingle");
+			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","1px solid rgba(255, 0, 0, .3)");
+		}
 	}
+}
+
+/* Strips the venue info out of itinerary (leaving only id, startDate, endDate)
+ * and store just that for efficiency purposes since API calls get venue info anyway
+ * TODO: actually strip venue information
+ */
+function storeItinerary() {
+	itineraries[n] = itinerary;
+	store.set('fourpeople', JSON.stringify(itineraries));
+	console.log(itineraries);
 }
 
 /*
@@ -900,11 +950,24 @@ $(document).on('click', '.edit-venue', function(){
 				//remove venue from display
 				var tbody = document.getElementById("venue-table-tbody");
 				var trChild = document.getElementById("tr-" + thisVenue.id);
+<<<<<<< HEAD
 				$(trChild).hide(600, function() {
 					var throwawayNode = tbody.removeChild(trChild);
 				});
 				
 			});
+=======
+				var throwawayNode = tbody.removeChild(trChild);
+				
+				//store new itinerary
+				storeItinerary();
+				
+				if(itinerary.itinerary.length == 0) {
+					$("#no-venues-error").show();
+				}
+			});	
+			
+>>>>>>> 4789744c0d9d2a906c6f7ca630f5ea1abb562572
 		});
 		
 		//when click "done" hide editing areas and show edit button, new time
