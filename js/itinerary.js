@@ -420,9 +420,15 @@ var showAddVenuesPanel = function() {
 
 	//$('.timeChange').hide();
 	//$('.timeDisplay').show();
-	$("#itinerary-content").animate({
-       width: '50%'
-    }, { duration: durLength, queue: false });
+	if(document.body.offsetWidth > 1024) {
+		$("#itinerary-content").animate({
+		   width: '50%'
+		}, { duration: durLength, queue: false });
+	} else {
+		$("#itinerary-content").animate({
+		   width: '58%'
+		}, { duration: durLength, queue: false });
+	}
     $("#add-venues-content").show({
 		effect: "slide",
 		duration: 400,
