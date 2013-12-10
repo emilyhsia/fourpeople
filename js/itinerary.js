@@ -300,11 +300,16 @@ var _setVenuePrimaryCategory = function(venueObject) {
  * @type helper
  */
 var _createCategoryIconColumn = function(category) {
-	var iconColumn = $(document.createElement('td')).addClass('icon');
-	var iconImg = document.createElement('img');
-	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix).addClass('img-circle');
-	var timeline = $(document.createElement('div')).addClass("timeline");
-	iconColumn.append(timeline).append(iconImg);
+	var iconColumn;
+	if(category != null){
+		var iconColumn = $(document.createElement('td')).addClass('icon');
+		var iconImg = document.createElement('img');
+		$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix).addClass('img-circle');
+		var timeline = $(document.createElement('div')).addClass("timeline");
+		iconColumn.append(timeline).append(iconImg);
+	} else {
+		iconColumn = "<td></td>";
+	}
 	return iconColumn;
 }
 
@@ -332,7 +337,12 @@ var _createVenueInfoColumn = function(venue) {
 	var ratingColumn = $(document.createElement('td')).append(ratingHeader);
 	// address & category
 	var addressText = $(document.createElement('p')).text(venue.venue.location.address).css("margin-bottom", "0px");
-	var categoryText = $(document.createElement('p')).text(venue.venue.category.shortName);
+	var categoryText;
+	if(venue.venue.category != null) { 
+		$(document.createElement('p')).text(venue.venue.category.shortName);
+	} else {
+		$(document.createElement('p')).text("(No category)");
+	}
 	var addressCategoryDiv = $(document.createElement('div')).addClass('info').append(addressText).append(categoryText);
 	var addressCategoryColumn = $(document.createElement('td')).append(addressCategoryDiv);
 	// rating and venue info table
@@ -581,7 +591,14 @@ function getNextAvailableTime() {
 
 // Builds the panel for a single search result
 function buildResultPanel(number, name, address, id, category) {
-	var icon = category.icon.prefix + "bg_88" + category.icon.suffix;
+	var category = [];
+	var icon = "";
+	if(category.icon != null) {
+		icon = category.icon.prefix + "bg_88" + category.icon.suffix;
+	} else {
+		category.name = "(No category)";
+	}
+	
 
 	var startTimeSetHTML = 
 	'<span width="400px;"><b>Start</b></span>' + 
