@@ -19,7 +19,7 @@ if(currentJSON == null) {
 // as name and create new itinerary
 // rewrite to storage and redirect to new itinerary
 $("#create-new-itinerary").click(function(){
-	var itineraryName = $("#itinerary-name").val();
+	var itineraryName = $("#new-itinerary-name").val();
 	var itineraryID = parseInt(store.get('fourpeopleID'));
 	nextItineraryID++;
 	store.set('fourpeopleID', nextItineraryID);
@@ -37,7 +37,7 @@ $("#create-new-itinerary").click(function(){
 });
 
 // allow user to create new itinerary by pressing enter
-$("#itinerary-name").keypress(function(e){
+$("#new-itinerary-name").keypress(function(e){
 	if(e.which == 13) {
 		$("#create-new-itinerary").click();
 	}
