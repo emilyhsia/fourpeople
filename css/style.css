@@ -282,7 +282,7 @@ td.time {
 }
 
 #venue-table-tbody {
-	border-collapse: separate;
+	/*border-collapse: separate;*/
 }
 #venue-table-tbody tr.border {
 	border-top: 1px solid #dddddd;
@@ -290,4 +290,17 @@ td.time {
 
 #sample-itinerary-table tbody td.edit-venue {
 	display: none;
+}
+
+.about {
+	margin-left: auto;
+	margin-right: auto;
+	width: 70%;
+	text-align:center
+
+}
+
+.about-passages {
+	font-size: 22px;
+	color: #969696;
 }
