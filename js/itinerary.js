@@ -568,8 +568,14 @@ function showResults(venues) {
  * is the end date/time of the very last venue on the itinerary.
  */
 function getNextAvailableTime() {
-	var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
-	return lastVenue.endDate;		//TODO: if no venues!
+	if(itinerary.itinerary.length > 0) {
+		var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
+		return lastVenue.endDate;
+	} else {
+		var now = new Date(Date.now());
+		now.setMinutes(0);
+		return now;
+	}
 }
 
 // Builds the panel for a single search result
@@ -635,6 +641,9 @@ function buildResultPanel(number, name, address, id, category) {
 
 // Takes the new itinerary, sorts it, and displays everything
 var sortAndDisplayItinerary = function(newVenue) {
+	// hide no-venues-error, just in case was showing from empty
+	$("#no-venues-error").hide();
+	
 	//sort itinerary first
 	sortItinerary();
 	
@@ -847,6 +856,10 @@ $(document).on('click', '.edit-venue', function(){
 				
 				//store new itinerary
 				storeItinerary();
+				
+				if(itinerary.itinerary.length == 0) {
+					$("#no-venues-error").show();
+				}
 			});	
 			
 		});
