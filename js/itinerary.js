@@ -65,7 +65,8 @@ if(!foundItinerary) {
 //=============================================================================
 //=============================================================================
 
-$('h1#itinerary-title').text(itinerary.name);
+$('h1#itinerary-title span#itinerary-title-name').text(itinerary.name);
+$('h1#itinerary-title span#itinerary-title-id').text('(id: ' + itinerary.id + ')');
 $('#itinerary-name').val(itinerary.name);
 $('#itinerary-name').hide();
 $('#save-itinerary-name').hide();
@@ -103,7 +104,7 @@ $('#save-itinerary-name').click(function() {
 	$('#save-itinerary-name').hide();
 	$('#cancel-save-itinerary-name').hide();
 	itinerary.name = $('#itinerary-name').val();
-	$('h1#itinerary-title').html(itinerary.name);
+	$('h1#itinerary-title span#itinerary-title-name').html(itinerary.name);
 	$('h1#itinerary-title').show();
 	$('#edit-itinerary-name').show();
 	$('#delete-itinerary').show();
