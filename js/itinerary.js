@@ -5,14 +5,37 @@ var CLIENT_ID = "5CYXNIKAOPTKCKIGHNPPJ3DQJBY4IPL0XJL140TLN121U514";
 var CLIENT_SECRET = "RPZTJ5NHBY0L213UKWP3T3DF2QVUXNKMW34FRJOUZFDIFNDM&v=20131124";
 var cloudMadeAPIKey = '7da9717aa6e646c2b4d6a6a1fbc94765';
 
-itineraries = JSON.parse(store.get('fourpeople'));
-console.log(itineraries);
+// Check storage for itineraries - if none, write sample itineraries;
+// if stored itineraries, then get them 
+var currentJSON = store.get('fourpeople');
+
+if(currentJSON == null) {
+	store.set('fourpeople', JSON.stringify(sampleItineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+	itineraries = JSON.parse(store.get('fourpeople'));
+	store.set('fourpeopleID', nextItineraryID);
+} else {
+	itineraries = JSON.parse(currentJSON);
+	console.log(JSON.parse(store.get('fourpeople')));
+	nextItineraryID = parseInt(store.get('fourpeopleID'));
+}
 
 //get id from URL
 //split at & if multiple parameters passed; id must be first
 //TODO: make more robust
 var idEquals = location.search.split("&")[0];
 var itineraryID = parseInt(idEquals.split("=")[1]);
+
+//if sample itinerary, redirect to sample page (non-edit)
+if(itineraryID <= numSamples && location.href.indexOf("sample-itinerary.html") == -1 ) {
+	window.location.href = "sample-itinerary.html?id=" + itineraryID;
+}
+//if not sample itinerary and accidentally on sample page, redirect to regular 
+if(itineraryID > numSamples && location.href.indexOf("sample-itinerary.html") != -1 ) {
+	window.location.href = "itinerary.html?id=" + itineraryID;
+}
+
+//locate itinerary and put in variable as handle for page
 var n = 0;
 var foundItinerary = false;
 var itinerary = null;
@@ -25,7 +48,7 @@ while(!foundItinerary && n < itineraries.length) {
 	n++;
 }
 
-// TODO
+// TODO: make this error message cooler
 if(!foundItinerary) {
 	var toDisplay = '<h1>Oops, this is embarrassing!</h1>' + 
 					'<h3>We could not find your itinerary.</h3>' + 
@@ -40,11 +63,86 @@ if(!foundItinerary) {
 // Viewing current itinerary
 //=============================================================================
 //=============================================================================
+
+$('h1#itinerary-title').text(itinerary.name);
+$('#itinerary-name').val(itinerary.name);
+$('#itinerary-name').hide();
+$('#save-itinerary-name').hide();
+$('#cancel-save-itinerary-name').hide();
+$('#confirm-delete-info').hide();
+$('#yes-delete-this-itinerary').hide();
+$('#no-cancel-this-delete').hide();
+
+// if click "edit name," show editing input/buttons
 $("#edit-itinerary-name").click(function(){
-	alert("Coming soon! :)");
+	$('h1#itinerary-title').hide();
+	$('#edit-itinerary-name').hide();
+	$('#delete-itinerary').hide();
+	$('#itinerary-name').val(itinerary.name);
+	$('#itinerary-name').show();
+	$('#save-itinerary-name').show();
+	$('#cancel-save-itinerary-name').show();
 });
+
+// if cancel name edit, hide editing input/buttons 
+$('#cancel-save-itinerary-name').click(function() {	
+	$('#itinerary-name').hide();
+	$('#save-itinerary-name').hide();
+	$('#cancel-save-itinerary-name').hide();
+	$('h1#itinerary-title').show();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+
+});
+
+// if save name edit, hide editing input/buttons,
+// save input as name, and update name h1
+$('#save-itinerary-name').click(function() {
+	$('#itinerary-name').hide();
+	$('#save-itinerary-name').hide();
+	$('#cancel-save-itinerary-name').hide();
+	itinerary.name = $('#itinerary-name').val();
+	$('h1#itinerary-title').html(itinerary.name);
+	$('h1#itinerary-title').show();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+});
+
+// if click "delete," make user confirm first
 $("#delete-itinerary").click(function() {
-	alert("Are you sure? (We can't do this yet anyway!)");
+	$('#edit-itinerary-name').hide();
+	$('#delete-itinerary').hide();
+	$('#confirm-delete-info').show();
+	$('#yes-delete-this-itinerary').show();
+	$('#no-cancel-this-delete').show();
+});
+
+// if click cancel, hide delete info
+$('#no-cancel-this-delete').click(function(){
+	$('#yes-delete-this-itinerary').hide();
+	$('#no-cancel-this-delete').hide();
+	$('#confirm-delete-info').hide();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+});
+
+// if click yes, delete, then delete itinerary and redirect to existing itineraries
+$('#yes-delete-this-itinerary').click(function(){
+	var i = 0;
+	var itineraryFound = false;
+	while(!itineraryFound) {
+		if(itineraries[i].id == itinerary.id) {
+			itineraryFound = true;
+		}
+		i++;
+	}
+	i--;
+	//remove venue from itinerary
+	itineraries.splice(i, 1);
+	store.set('fourpeople', JSON.stringify(itineraries));
+	
+	//redirect to existing itineraries
+	window.location.href = "existing-itineraries.html";
 });
 
 var formatVenueLookupURL = function(id) {
@@ -70,7 +168,6 @@ var lookupFoursquareVenue = function(venueObject, callback) {
 	});
 }
 
-$('h1#itinerary-title').text(itinerary.name);
 
 /* 
  * Displays a single venue. The venue param is the a venue Object with the injected Foursquare venue
@@ -149,7 +246,7 @@ var displayVenue = function(venue) {
 	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueInfoColumn).append(timeColumn).append(editColumn);
 
 	$(row).on('mouseover', function() {
-		if ($('#add-venues-content').css('display') == 'none') {
+		if ($('#add-venues-content').css('display') == 'none' && $('.timeChange').css('display') == 'none') {
 			$("#edit-" + venue.id).show();
 		}
 	});
@@ -468,7 +565,7 @@ function showResults(venues) {
  */
 function getNextAvailableTime() {
 	var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
-	return lastVenue.endDate;
+	return lastVenue.endDate;		//TODO: if no venues!
 }
 
 // Builds the panel for a single search result
@@ -553,6 +650,34 @@ var sortAndDisplayItinerary = function(newVenue) {
 	setTimeout(function() {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
 	}, 600);
+
+	detectCollision();
+}
+
+function detectCollision(){
+	for (var i = 1; i< itinerary.itinerary.length-1; i++){
+		var beforeStart = (itinerary.itinerary[i-1].startDate);
+		var beforeEnd = (itinerary.itinerary[i-1].endDate);
+		var currentStart = (itinerary.itinerary[i].startDate);
+		var currentEnd = (itinerary.itinerary[i].endDate);
+		var afterStart = (itinerary.itinerary[i+1].startDate);
+		var afterEnd = (itinerary.itinerary[i+1].endDate);
+		console.log("ID " + itinerary.itinerary[i].id);
+
+		if (currentStart < beforeEnd){
+			console.log("COLLISIONTop");
+			//grab tr- id. 
+			//$("#tr-" +(itinerary.itinerary[i].id)).html("Well crap");
+			//alert($("#tr-" +(itinerary.itinerary[i].id)).html());
+			$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+			//$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","4px solid red");
+		} 
+		if (currentEnd > afterStart){
+			console.log("COLLISIONBottom");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .5)");
+		}
+
+	}
 }
 
 /*
@@ -636,6 +761,7 @@ var createVenueObject = function(id, startDate, endDate) {
 
 //when "edit" button clicked, show edit areas for that venue
 $(document).on('click', '.edit-venue', function(){
+	$(this).hide();
 	//get id of venue clicked
 	var editIDfull = $(this).children('button').attr('id');
 	console.log("clicked " + editIDfull);

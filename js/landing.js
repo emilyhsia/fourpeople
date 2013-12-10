@@ -1,15 +1,28 @@
 /** JavaScript functionality for landing page */
 
-store.set('fourpeople', JSON.stringify(itineraries));
-console.log(JSON.parse(store.get('fourpeople')));
+// Check storage for itineraries - if none, write sample itineraries;
+// if stored itineraries, then get them 
+var currentJSON = store.get('fourpeople');
+
+if(currentJSON == null) {
+	store.set('fourpeople', JSON.stringify(sampleItineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+	itineraries = JSON.parse(store.get('fourpeople'));
+	store.set('fourpeopleID', nextItineraryID);
+} else {
+	itineraries = JSON.parse(currentJSON);
+	console.log(JSON.parse(store.get('fourpeople')));
+	nextItineraryID = parseInt(store.get('fourpeopleID'));
+}
 
 // when user clicks create new itinerary, use input
 // as name and create new itinerary
 // rewrite to storage and redirect to new itinerary
 $("#create-new-itinerary").click(function(){
 	var itineraryName = $("#itinerary-name").val();
-	var itineraryID = nextItineraryID;
+	var itineraryID = parseInt(store.get('fourpeopleID'));
 	nextItineraryID++;
+	store.set('fourpeopleID', nextItineraryID);
 
 	itineraries.push({
 		name: itineraryName,

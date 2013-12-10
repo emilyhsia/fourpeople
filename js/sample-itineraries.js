@@ -1,7 +1,8 @@
 // Dummy London itinerary
 var nextItineraryID = 3;
-
-var itineraries = 
+var numSamples = 2;
+var itineraries = sampleItineraries;
+var sampleItineraries = 
 [
 	{
 		name: "London",
@@ -31,6 +32,16 @@ var itineraries =
 				id: "4ac518cdf964a520f2a520e3",
 				startDate: "Tue Jul 02 2013 17:00:00 GMT-0400 (Eastern Daylight Time)",
 				endDate: "Tue Jul 02 2013 18:30:00 GMT-0400 (Eastern Daylight Time)"
+			},
+			{
+				id: "4ac518d2f964a5203da720e3",
+				startDate: "Wed Jul 03 2013 10:00:00 GMT-0400 (Eastern Daylight Time)",
+				endDate: "Wed Jul 03 2013 12:00:00 GMT-0400 (Eastern Daylight Time)"
+			},
+			{
+				id: "4c31c371a0ced13a150d146e",
+				startDate: "Wed Jul 03 2013 13:00:00 GMT-0400 (Eastern Daylight Time)",
+				endDate: "Wed Jul 03 2013 14:30:00 GMT-0400 (Eastern Daylight Time)"
 			}
 		]
 	},

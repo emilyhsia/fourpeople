@@ -139,6 +139,7 @@ td {
 td.icon {
 	width: 130px;
 	border: none!important;
+	border-top: 1px transparent solid!important;
 	position: relative;
 	vertical-align: top!important;
 }
@@ -294,6 +295,7 @@ td.time {
 	border-top: 1px solid #dddddd;
 }
 
+
 h4.list-group-item-heading {
 	font-style: normal;
 	font-size: 28px;
@@ -305,5 +307,10 @@ h4.list-group-item-heading {
 
 .container.wide {
 	width: 95%;
+}
+
+
+#sample-itinerary-table tbody td.edit-venue {
+	display: none;
 }
 

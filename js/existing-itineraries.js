@@ -1,18 +1,23 @@
 /** JavaScript functionalities for existing itineraries */
 
-// TODO: make sure not empty - if so, just use sample
+// Check storage for itineraries - if none, write sample itineraries;
+// if stored itineraries, then get them 
 var currentJSON = store.get('fourpeople');
 
 if(currentJSON == null) {
-	itineraries.forEach(function(itinerary){
-		$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
-	});
+	store.set('fourpeople', JSON.stringify(sampleItineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+	itineraries = JSON.parse(store.get('fourpeople'));
+	store.set('fourpeopleID', nextItineraryID);
 } else {
 	itineraries = JSON.parse(currentJSON);
-	itineraries.forEach(function(itinerary) {
-		$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
-	});
+	console.log(JSON.parse(store.get('fourpeople')));
+	nextItineraryID = parseInt(store.get('fourpeopleID'));
 }
+
+itineraries.forEach(function(itinerary) {
+	$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
+});
 
 function buildItineraryDiv(itinerary) {
 	var name = itinerary.name;
@@ -28,7 +33,7 @@ function buildItineraryDiv(itinerary) {
 	}
 	
 	var html = '<tr id="itinerary-' + id + '">' + 
-			'<td><h3>'+ name + ( (id < 3) ? ' (Sample)' : '') + '</h3></td>';
+			'<td><h3>'+ name + ( (id < numSamples + 1) ? ' (Sample)' : '') + '</h3></td>';
 	if(venuesExist) {
 		html +=	'<td>' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  ' to ' + 
 			getWordsDateString(endDate) + ' at ' + getDisplayTimeString(endDate) +  '</td>';
@@ -36,8 +41,9 @@ function buildItineraryDiv(itinerary) {
 		html += '<td> (No venues yet) </td>';
 	}
 	
-	html += '<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>' + 
-			'<td class="delete-td">' + 
+	html += (id < numSamples + 1) ? '<td><a href="sample-itinerary.html?id=' + id + '"><button id="view-' + id + '" class="btn btn-info">View</button></a></td>' :
+									'<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>';
+	html += '<td class="delete-td">' + 
 				'<div id="delete-div-' + id + '" class="delete-div"><button id="delete-' + id + '" class="btn btn-danger delete-itinerary">Delete</button></div>' + 
 				'<div class="confirm-delete-div" style="text-align: center; display: none;">Are you sure? <br>This cannot be undone.<br>' +
 					'<button id="yes-delete-' + id + '" class="btn btn-danger">Yes, Delete</button><br><br>' + 
