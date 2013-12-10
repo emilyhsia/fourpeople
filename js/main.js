@@ -9,7 +9,7 @@ $(function(){
             '<span class="icon-bar"></span>' +
             '<span class="icon-bar"></span>' +
           '</button>' + 
-          '<a class="navbar-brand" href="landing.html">FourPeople</a>' +
+          '<a class="navbar-brand" href="index.html">AdventureReady</a>' +
         '</div>' +
         '<div class="collapse navbar-collapse">' +
           '<ul class="nav navbar-nav">' +
