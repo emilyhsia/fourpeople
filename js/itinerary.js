@@ -893,8 +893,8 @@ var detectDateTimeStatus = function(startDate, endDate) {
 	var today = new Date();
 	var message = "";
 	if (start < today || end < today) {
-		//message = "Sorry! We don't support trips to the past yet."
-		message = "Venue added!";
+		message = "Sorry! We don't support trips to the past yet."
+		//message = "Venue added!";
 	} else if (start > end) {
 		message = "Whoops! Your start time is after your end time.";
 	} else {
