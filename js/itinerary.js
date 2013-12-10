@@ -365,7 +365,6 @@ var _createVenueInfoColumn = function(venue) {
 displayAllVenues();
 
 
-
 function displayAllVenues() {
 	if(itinerary.itinerary.length > 0) {
 		$("#no-venues-error").hide();
@@ -406,6 +405,8 @@ function displayAllVenues() {
 		lookupFoursquareVenue(venue, displayVenue);
 
 	});
+
+	detectCollision();
 }
 
 
@@ -749,10 +750,24 @@ function detectCollision(){
 			if (currentStart < beforeEnd){
 				console.log("COLLISIONTop");
 				$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+				$("#tr-" + (itinerary.itinerary[i].id) + " .time").css("color", "#FF0000");
+
+				//if there is a collison on the second item, change the first one too
+				if (i == 1){
+					$("#tr-" +(itinerary.itinerary[i-1].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
+					$("#tr-" + (itinerary.itinerary[i-1].id) + " .time").css("color", "#FF0000");
+				}
 			} 
 			if (currentEnd > afterStart){
 				console.log("COLLISIONBottom");
 				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
+				$("#tr-" + (itinerary.itinerary[i].id) + " .time").css("color", "#FF0000");
+
+					//if there is a collison at the 2nd to last item, change the last one too
+					if(i == itinerary.itinerary.length-2){
+						$("#tr-" +(itinerary.itinerary[i+1].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+						$("#tr-" + (itinerary.itinerary[i+1].id) + " .time").css("color", "#FF0000");
+					}
 			}
 
 		}
@@ -763,6 +778,8 @@ function detectCollision(){
 			console.log("COLLISIONSingle");
 			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
 			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+			$("#tr-" + (itinerary.itinerary[0].id) + " .time").css("color", "#FF0000");
+			$("#tr-" + (itinerary.itinerary[1].id) + " .time").css("color", "#FF0000");
 		}
 	}
 }
