@@ -5,7 +5,8 @@ var CLIENT_ID = "5CYXNIKAOPTKCKIGHNPPJ3DQJBY4IPL0XJL140TLN121U514";
 var CLIENT_SECRET = "RPZTJ5NHBY0L213UKWP3T3DF2QVUXNKMW34FRJOUZFDIFNDM&v=20131124";
 var cloudMadeAPIKey = '7da9717aa6e646c2b4d6a6a1fbc94765';
 
-//TODO: error check
+// Check storage for itineraries - if none, write sample itineraries;
+// if stored itineraries, then get them 
 var currentJSON = store.get('fourpeople');
 
 if(currentJSON == null) {
@@ -34,6 +35,7 @@ if(itineraryID > numSamples && location.href.indexOf("sample-itinerary.html") !=
 	window.location.href = "itinerary.html?id=" + itineraryID;
 }
 
+//locate itinerary and put in variable as handle for page
 var n = 0;
 var foundItinerary = false;
 var itinerary = null;
@@ -46,7 +48,7 @@ while(!foundItinerary && n < itineraries.length) {
 	n++;
 }
 
-// TODO: make it cooler
+// TODO: make this error message cooler
 if(!foundItinerary) {
 	var toDisplay = '<h1>Oops, this is embarrassing!</h1>' + 
 					'<h3>We could not find your itinerary.</h3>' + 
@@ -61,11 +63,86 @@ if(!foundItinerary) {
 // Viewing current itinerary
 //=============================================================================
 //=============================================================================
+
+$('h1#itinerary-title').text(itinerary.name);
+$('#itinerary-name').val(itinerary.name);
+$('#itinerary-name').hide();
+$('#save-itinerary-name').hide();
+$('#cancel-save-itinerary-name').hide();
+$('#confirm-delete-info').hide();
+$('#yes-delete-this-itinerary').hide();
+$('#no-cancel-this-delete').hide();
+
+// if click "edit name," show editing input/buttons
 $("#edit-itinerary-name").click(function(){
-	alert("Coming soon! :)");
+	$('h1#itinerary-title').hide();
+	$('#edit-itinerary-name').hide();
+	$('#delete-itinerary').hide();
+	$('#itinerary-name').val(itinerary.name);
+	$('#itinerary-name').show();
+	$('#save-itinerary-name').show();
+	$('#cancel-save-itinerary-name').show();
 });
+
+// if cancel name edit, hide editing input/buttons 
+$('#cancel-save-itinerary-name').click(function() {	
+	$('#itinerary-name').hide();
+	$('#save-itinerary-name').hide();
+	$('#cancel-save-itinerary-name').hide();
+	$('h1#itinerary-title').show();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+
+});
+
+// if save name edit, hide editing input/buttons,
+// save input as name, and update name h1
+$('#save-itinerary-name').click(function() {
+	$('#itinerary-name').hide();
+	$('#save-itinerary-name').hide();
+	$('#cancel-save-itinerary-name').hide();
+	itinerary.name = $('#itinerary-name').val();
+	$('h1#itinerary-title').html(itinerary.name);
+	$('h1#itinerary-title').show();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+});
+
+// if click "delete," make user confirm first
 $("#delete-itinerary").click(function() {
-	alert("Are you sure? (We can't do this yet anyway!)");
+	$('#edit-itinerary-name').hide();
+	$('#delete-itinerary').hide();
+	$('#confirm-delete-info').show();
+	$('#yes-delete-this-itinerary').show();
+	$('#no-cancel-this-delete').show();
+});
+
+// if click cancel, hide delete info
+$('#no-cancel-this-delete').click(function(){
+	$('#yes-delete-this-itinerary').hide();
+	$('#no-cancel-this-delete').hide();
+	$('#confirm-delete-info').hide();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+});
+
+// if click yes, delete, then delete itinerary and redirect to existing itineraries
+$('#yes-delete-this-itinerary').click(function(){
+	var i = 0;
+	var itineraryFound = false;
+	while(!itineraryFound) {
+		if(itineraries[i].id == itinerary.id) {
+			itineraryFound = true;
+		}
+		i++;
+	}
+	i--;
+	//remove venue from itinerary
+	itineraries.splice(i, 1);
+	store.set('fourpeople', JSON.stringify(itineraries));
+	
+	//redirect to existing itineraries
+	window.location.href = "existing-itineraries.html";
 });
 
 var formatVenueLookupURL = function(id) {
@@ -91,7 +168,6 @@ var lookupFoursquareVenue = function(venueObject, callback) {
 	});
 }
 
-$('h1#itinerary-title').text(itinerary.name);
 
 /* 
  * Displays a single venue. The venue param is the a venue Object with the injected Foursquare venue
@@ -477,7 +553,7 @@ function showResults(venues) {
  */
 function getNextAvailableTime() {
 	var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
-	return lastVenue.endDate;
+	return lastVenue.endDate;		//TODO: if no venues!
 }
 
 // Builds the panel for a single search result
