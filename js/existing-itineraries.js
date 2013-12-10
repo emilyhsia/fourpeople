@@ -139,18 +139,45 @@ $(document).on('click', '.copy-itinerary', function(){
 	nextItineraryID++;
 	store.set('fourpeopleID', nextItineraryID);
 	var venues = itinerary.itinerary;
+	var copy = $.extend(true, [], venues);
+	updateCopiedDates(copy);
 	
+
 	itineraries.push({
 		name: itineraryName,
 		id: itineraryID,
-		itinerary: venues
+		itinerary: copy
 	});
 	
 	store.set('fourpeople', JSON.stringify(itineraries));
 	console.log(JSON.parse(store.get('fourpeople')));
 		
-	window.location.href = "itinerary.html?id=" + itineraryID;
+	//window.location.href = "itinerary.html?id=" + itineraryID;
 });
+
+var updateCopiedDates = function(venues) {
+	var today = new Date();
+	console.log('today: ' + today);
+	today = createDateString(getCalendarString(today.toString()), "00:00");
+	var newBegin = today.getTime();
+	console.log('newBeing: ' + new Date(newBegin));
+	venues.forEach(function(venue) {
+		var oldBegin = new Date(venue.startDate);
+		console.log('oldbegin: ' + oldBegin);
+		oldBegin = oldBegin.getTime() % (1000*24*60*60);
+		var oldEnd = new Date(venue.endDate);
+		console.log('oldEnd: ' + oldEnd);
+		oldEnd = oldEnd.getTime() % (1000*24*60*60);
+		var newEnd = new Date(newBegin + oldEnd - oldBegin);
+		console.log('newend: ' + newEnd);
+		newBegin = newEnd.getTime();
+
+		console.log('new end: ' + newEnd + " new begin: " + newBegin);
+		console.log('SET: ' + new Date(newBegin).toString());
+		venue.startDate = new Date(newBegin).toString();
+		venue.endDate = new Date(newEnd).toString();
+	});
+}
 
 
 // if click creat3 new button, create new itinerary and redirect to page
