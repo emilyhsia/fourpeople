@@ -8,13 +8,13 @@
     <meta name="author" content="">
    <!-- <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png"> TODO -->
 
-    <title>Sample Itinerary</title>
+    <title>Help</title>
 
     <!-- Bootstrap core CSS -->
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
 
 	<link href="jquery-ui/css/custom-theme/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
-    
+    <link href="css/jquery.timePicker.css" rel="stylesheet">
 	<!-- Custom styles for this template -->
     <link href="css/style.css" rel="stylesheet">
 	
@@ -25,13 +25,6 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
 	
-	<!-- include Leaflet CSS and JavaScript files -->
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
-	 <!--[if lte IE 8]>
-	     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
-	 <![endif]-->
-	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
-
   </head>
 
   <body>
@@ -41,60 +34,24 @@
     </div>
 
     <div class="container">
-	
-		<div id="itinerary-content" class="left">
-			<h1 id="itinerary-title">Existing view here</h1>
-			<p>This is a sample itinerary. You can't edit it, but if you like it, click "Copy this itinerary" to create your own adventure based on these venues.</p>
-			<button id="use-itinerary" class="btn btn-success right">Copy this itinerary</button><br><br>
-			<table class="table table-hover" id="sample-itinerary-table">
-				<tbody id="venue-table-tbody">
-				</tbody>
-			</table>
-			<div id="timeline"></div>
-		</div> <!-- /#itinerary-content.left -->
+		<h1>Coming soon</h1>
+		
 
     </div><!-- /.container -->
-
 	<div class="container" id="footer">
 		<hr>
 		<div id="map-attribution"><a href="http://leafletjs.com/">Leaflet</a> | Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a></div>
+		<!-- filled in by main.js on every page -->
 	</div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="jquery-ui/js/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 	
 	<!-- custom JavaScript -->
 	<script type="text/javascript" src="js/main.js"></script>
-	<script type="text/javascript" src="js/sample-itineraries.js"></script>
-	<script type="text/javascript" src="js/date-functions.js"></script>
-	<script type="text/javascript" src="js/store.js"></script>
-	<script type="text/javascript" src="js/itinerary.js"></script>
-	
-	<script type="text/javascript">
-	$(function(){
-		$("#itinerary-title").html(itinerary.name);
-		$("#use-itinerary").click(function(){
-			var itineraryName = itinerary.name + " (Copy)";
-			var itineraryID = parseInt(store.get('fourpeopleID'));
-			nextItineraryID++;
-			store.set('fourpeopleID', nextItineraryID);
-			var venues = itinerary.itinerary;
-			
-			itineraries.push({
-				name: itineraryName,
-				id: itineraryID,
-				itinerary: venues
-			});
-			
-			store.set('fourpeople', JSON.stringify(itineraries));
-			console.log(JSON.parse(store.get('fourpeople')));
-				
-			window.location.href = "itinerary.html?id=" + itineraryID;
-		});
-	});
-	</script>
+
   </body>
 </html>

@@ -41,8 +41,7 @@ function buildItineraryDiv(itinerary) {
 	//if there are venues, display start time and end time;
 	//otherwise, just say no venues
 	if(venuesExist) {
-		html +=	'<td style="text-align:center;">' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  '<br> to <br>' + 
-			getWordsDateString(endDate) + ' at ' + getDisplayTimeString(endDate) +  '</td>';
+		html +=	'<td style="text-align:center;">' + getWordsDateString(startDate) + ' - ' + getWordsDateString(endDate) + '</td>';
 	} else {
 		html += '<td style="text-align: center;"> (No venues yet) </td>';
 	}

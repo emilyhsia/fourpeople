@@ -65,6 +65,9 @@ if(!foundItinerary) {
 //=============================================================================
 //=============================================================================
 
+//set printer button
+$("#printer-view-ahref").attr('href', 'printer-view.html?id='+itinerary.id);
+
 $('h1#itinerary-title span#itinerary-title-name').text(itinerary.name);
 $('h1#itinerary-title span#itinerary-title-id').text('(id: ' + itinerary.id + ')');
 $('#itinerary-name').val(itinerary.name);
@@ -271,7 +274,8 @@ var displayVenue = function(venue) {
 	var leafletMap = L.map('map' + venue.venue.id, {
 		center: [venue.venue.location.lat, venue.venue.location.lng],
 		zoom: 16,
-		dragging: true
+		dragging: true,
+		scrollWheelZoom: false
 	});
 	L.tileLayer('http://{s}.tile.cloudmade.com/' + cloudMadeAPIKey + '/997/256/{z}/{x}/{y}.png', {
 	    maxZoom: 50
@@ -474,11 +478,6 @@ function clearOldSearch() {
 	$("#search-results").html(" ");
 }
 
-// TODO: printer-friendly itinerary version
-$("#printer-view").click(function(){
-	alert("Coming soon :)");
-});
-
 // Gathers parameters and sends search request to Foursquare API
 $("#search-for-venues").click(function() {
 	//error checking first - must have venue name and geocode for search
@@ -584,7 +583,7 @@ function showResults(venues) {
 		var mapID = 'panel-map-' + i;
 		var lat = venues[i].location.lat;
 		var lng = venues[i].location.lng;
-		var map = L.map(mapID).setView([lat, lng], 16);
+		var map = L.map(mapID, {scrollWheelZoom: false}).setView([lat, lng], 16);
 		L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			attribution: '',
 			maxZoom: 18
