@@ -719,7 +719,7 @@ var sortAndDisplayItinerary = function(newVenue) {
 	$('#tr-' + newVenue.id).addClass('highlight-venue');
 	var top = $('#tr-' + newVenue.id).offset().top;
 	$('html, body').animate({
-        scrollTop: $('#tr-' + newVenue.id).offset().top
+        scrollTop: $('#tr-' + newVenue.id).offset().top - 50
     }, 1500);
 	setTimeout(function() {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
@@ -736,10 +736,10 @@ var sortAndDisplayItinerary = function(newVenue) {
 function detectCollision(){
 	if(itinerary.itinerary.length > 2) {
 		for (var i = 1; i< itinerary.itinerary.length-1; i++){
-			var beforeEnd = (itinerary.itinerary[i-1].endDate);
-			var currentStart = (itinerary.itinerary[i].startDate);
-			var currentEnd = (itinerary.itinerary[i].endDate);
-			var afterStart = (itinerary.itinerary[i+1].startDate);
+			var beforeEnd = new Date(itinerary.itinerary[i-1].endDate);
+			var currentStart = new Date(itinerary.itinerary[i].startDate);
+			var currentEnd = new Date(itinerary.itinerary[i].endDate);
+			var afterStart = new Date(itinerary.itinerary[i+1].startDate);
 		
 
 			if (currentStart < beforeEnd){
@@ -767,8 +767,8 @@ function detectCollision(){
 
 		}
 	} else if(itinerary.itinerary.length == 2) {
-		var firstEnd = itinerary.itinerary[0].endDate;
-		var secondStart = itinerary.itinerary[1].startDate;
+		var firstEnd = new Date(itinerary.itinerary[0].endDate);
+		var secondStart = new Date(itinerary.itinerary[1].startDate);
 		if(secondStart < firstEnd) {
 			console.log("COLLISIONSingle");
 			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
