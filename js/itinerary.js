@@ -560,6 +560,7 @@ function showResults(venues) {
 		var id = $(this).find('.hidden-venue-id').text();
 		$(this).siblings('.panel-set-time').toggle(400);
 	});
+	
 
 }
 
@@ -671,23 +672,34 @@ var sortAndDisplayItinerary = function(newVenue) {
 	storeItinerary();
 }
 
+//TODO: debug
 function detectCollision(){
-	for (var i = 1; i< itinerary.itinerary.length-1; i++){
-		var beforeEnd = (itinerary.itinerary[i-1].endDate);
-		var currentStart = (itinerary.itinerary[i].startDate);
-		var currentEnd = (itinerary.itinerary[i].endDate);
-		var afterStart = (itinerary.itinerary[i+1].startDate);
-	
+	if(itinerary.itinerary.length > 2) {
+		for (var i = 1; i< itinerary.itinerary.length-1; i++){
+			var beforeEnd = (itinerary.itinerary[i-1].endDate);
+			var currentStart = (itinerary.itinerary[i].startDate);
+			var currentEnd = (itinerary.itinerary[i].endDate);
+			var afterStart = (itinerary.itinerary[i+1].startDate);
+		
 
-	if (currentStart < beforeEnd){
-			console.log("COLLISIONTop");
-			$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
-		} 
-		if (currentEnd > afterStart){
-			console.log("COLLISIONBottom");
+			if (currentStart < beforeEnd){
+				console.log("COLLISIONTop");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
+			} 
+			if (currentEnd > afterStart){
+				console.log("COLLISIONBottom");
 				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
-		}
+			}
 
+		}
+	} else if(itinerary.itinerary.length == 2) {
+		var firstEnd = itinerary.itinerary[0].endDate;
+		var secondStart = itinerary.itinerary[1].startDate;
+		if(secondStart < firstEnd) {
+			console.log("COLLISIONSingle");
+			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","1px solid rgba(255, 0, 0, .3)");
+		}
 	}
 }
 
