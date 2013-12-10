@@ -32,8 +32,13 @@ function buildItineraryDiv(itinerary) {
 		venuesExist = true;
 	}
 	
+	// start off row with id=itinerary-##, then add title
+	// add '(Sample)' if sample itinerary
 	var html = '<tr id="itinerary-' + id + '">' + 
-			'<td><h3>'+ name + ( (id < numSamples + 1) ? ' (Sample)' : '') + '</h3></td>';
+					'<td><h3>'+ name + ( (id <= numSamples) ? ' (Sample)' : '') + '</h3></td>';
+					
+	//if there are venues, display start time and end time;
+	//otherwise, just say no venues
 	if(venuesExist) {
 		html +=	'<td>' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  ' to ' + 
 			getWordsDateString(endDate) + ' at ' + getDisplayTimeString(endDate) +  '</td>';
@@ -41,16 +46,32 @@ function buildItineraryDiv(itinerary) {
 		html += '<td> (No venues yet) </td>';
 	}
 	
-	html += (id < numSamples + 1) ? '<td><a href="sample-itinerary.html?id=' + id + '"><button id="view-' + id + '" class="btn btn-info">View</button></a></td>' :
-									'<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>';
-	html += '<td class="delete-td">' + 
+	// if sample itinerary, have link go to sample-itinerary.html
+	// otherwise go to itinerary.html
+	if(id <= numSamples) {
+		html += '<td><a href="sample-itinerary.html?id=' + id + '"><button id="view-' + id + '" class="btn btn-info">View</button></a></td>';
+	} else {
+		html += '<td><a href="itinerary.html?id=' + id + '"><button id="edit-' + id + '" class="btn btn-primary">Edit</button></a></td>';
+	}
+	
+	// add copy column
+	html += '<td class="copy-td">' + 
+				'<button id="copy-' + id + '" class="btn btn-success copy-itinerary">Copy</button>' + 
+			'<td>';
+	
+	// if not a sample itinerary, add delete column
+	if(id > numSamples) {
+		html += '<td class="delete-td">' + 
 				'<div id="delete-div-' + id + '" class="delete-div"><button id="delete-' + id + '" class="btn btn-danger delete-itinerary">Delete</button></div>' + 
 				'<div class="confirm-delete-div" style="text-align: center; display: none;">Are you sure? <br>This cannot be undone.<br>' +
 					'<button id="yes-delete-' + id + '" class="btn btn-danger">Yes, Delete</button><br><br>' + 
 					'<button id="no-cancel-' + id + '" class="btn btn-primary">No, Cancel</button>' +
 				'</div>' + 
-			'</td>' + 
-			'<td class="hidden-id-holder" style="display:none">' + id + '</td>' + 
+			'</td>';
+	} else {
+		html += '<td class="dummy-holder"></td>';
+	}
+	html +=	'<td class="hidden-id-holder" style="display:none">' + id + '</td>' + 
 		'</tr>';
 		
 	return html;
@@ -95,4 +116,38 @@ $(document).on('click', '.delete-itinerary', function(){
 		var trChild = document.getElementById("itinerary-" + itineraryID);
 		var throwawayNode = tbody.removeChild(trChild);
 	});
+});
+
+// if click copy button, copy itinerary and redirect to page
+$(document).on('click', '.copy-itinerary', function(){
+	var copyButtonEl = event.target;
+	var itineraryID = $(copyButtonEl).attr('id').split("-")[1];
+	
+	var i = 0;
+	var itineraryFound = false;
+	var itinerary = null;
+	while(!itineraryFound) {
+		if(itineraries[i].id == itineraryID) {
+			itinerary = itineraries[i];
+			itineraryFound = true;
+		}
+		i++;
+	}
+	i--;
+	var itineraryName = itinerary.name + " (Copy)";
+	var itineraryID = parseInt(store.get('fourpeopleID'));
+	nextItineraryID++;
+	store.set('fourpeopleID', nextItineraryID);
+	var venues = itinerary.itinerary;
+	
+	itineraries.push({
+		name: itineraryName,
+		id: itineraryID,
+		itinerary: venues
+	});
+	
+	store.set('fourpeople', JSON.stringify(itineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+		
+	window.location.href = "itinerary.html?id=" + itineraryID;
 });
