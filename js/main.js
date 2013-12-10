@@ -13,13 +13,23 @@ $(function(){
         '</div>' +
         '<div class="collapse navbar-collapse">' +
           '<ul class="nav navbar-nav">' +
-            '<li class="active"><a href="">Edit</a></li>' +
-            '<li><a href="#about">New</a></li>' +
-            '<li><a href="existing-itineraries.html">Existing</a></li>' +
+            '<li id="home-tab-li"><a href="existing-itineraries.html">Home</a></li>' +
+            '<li id="about-tab-li"><a href="about.html">About</a></li>' +
+            '<li id="help-tab-li"><a href="help.html">Help</a></li>' +
           '</ul>' +
         '</div><!--/.nav-collapse -->' +
       '</div>';
 	$(".navbar").html(navbarHTML);
+	
+	//highlight the correct tab in navbar for active page
+	var path = window.location.pathname;
+	if(path.indexOf("existing-itineraries.html") != -1) {
+		$("#home-tab-li").addClass("active");
+	} else if(path.indexOf("about.html") != -1) {
+		$("#about-tab-li").addClass("active");
+	} else if(path.indexOf("help.html") != -1) {
+		$("#help-tab-li").addClass("active");
+	}
 	
 	//load footer
 	var footerHTML = 'Powered by &nbsp;' +
