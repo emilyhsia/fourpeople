@@ -65,7 +65,8 @@ if(!foundItinerary) {
 //=============================================================================
 //=============================================================================
 
-$('h1#itinerary-title').text(itinerary.name);
+$('h1#itinerary-title span#itinerary-title-name').text(itinerary.name);
+$('h1#itinerary-title span#itinerary-title-id').text('(id: ' + itinerary.id + ')');
 $('#itinerary-name').val(itinerary.name);
 $('#itinerary-name').hide();
 $('#save-itinerary-name').hide();
@@ -103,7 +104,7 @@ $('#save-itinerary-name').click(function() {
 	$('#save-itinerary-name').hide();
 	$('#cancel-save-itinerary-name').hide();
 	itinerary.name = $('#itinerary-name').val();
-	$('h1#itinerary-title').html(itinerary.name);
+	$('h1#itinerary-title span#itinerary-title-name').html(itinerary.name);
 	$('h1#itinerary-title').show();
 	$('#edit-itinerary-name').show();
 	$('#delete-itinerary').show();
@@ -726,7 +727,7 @@ function detectCollision(){
 			} 
 			if (currentEnd > afterStart){
 				console.log("COLLISIONBottom");
-				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
 			}
 
 		}
@@ -735,8 +736,8 @@ function detectCollision(){
 		var secondStart = itinerary.itinerary[1].startDate;
 		if(secondStart < firstEnd) {
 			console.log("COLLISIONSingle");
-			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
-			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","1px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
 		}
 	}
 }
