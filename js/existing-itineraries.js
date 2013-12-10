@@ -1,6 +1,7 @@
 /** JavaScript functionalities for existing itineraries */
 
-// TODO: make sure not empty - if so, just use sample
+// Check storage for itineraries - if none, write sample itineraries;
+// if stored itineraries, then get them 
 var currentJSON = store.get('fourpeople');
 
 if(currentJSON == null) {

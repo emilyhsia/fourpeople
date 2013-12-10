@@ -1,5 +1,7 @@
 /** JavaScript functionality for landing page */
 
+// Check storage for itineraries - if none, write sample itineraries;
+// if stored itineraries, then get them 
 var currentJSON = store.get('fourpeople');
 
 if(currentJSON == null) {
