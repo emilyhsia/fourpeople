@@ -271,7 +271,8 @@ var displayVenue = function(venue) {
 	var leafletMap = L.map('map' + venue.venue.id, {
 		center: [venue.venue.location.lat, venue.venue.location.lng],
 		zoom: 16,
-		dragging: true
+		dragging: true,
+		scrollWheelZoom: false
 	});
 	L.tileLayer('http://{s}.tile.cloudmade.com/' + cloudMadeAPIKey + '/997/256/{z}/{x}/{y}.png', {
 	    maxZoom: 50
@@ -584,7 +585,7 @@ function showResults(venues) {
 		var mapID = 'panel-map-' + i;
 		var lat = venues[i].location.lat;
 		var lng = venues[i].location.lng;
-		var map = L.map(mapID).setView([lat, lng], 16);
+		var map = L.map(mapID, {scrollWheelZoom: false}).setView([lat, lng], 16);
 		L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			attribution: '',
 			maxZoom: 18
