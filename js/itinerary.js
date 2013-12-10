@@ -612,7 +612,7 @@ function getNextAvailableTime() {
 		var lastVenue = itinerary.itinerary[itinerary.itinerary.length - 1];
 		return lastVenue.endDate;
 	} else {
-		var now = new Date(Date.now());
+		var now = new Date();
 		now.setMinutes(0);
 		return now;
 	}
