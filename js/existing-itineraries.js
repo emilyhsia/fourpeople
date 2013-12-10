@@ -44,7 +44,7 @@ function buildItineraryDiv(itinerary) {
 		html +=	'<td style="text-align:center;">' + getWordsDateString(startDate) + ' at ' + getDisplayTimeString(startDate) +  '<br> to <br>' + 
 			getWordsDateString(endDate) + ' at ' + getDisplayTimeString(endDate) +  '</td>';
 	} else {
-		html += '<td> (No venues yet) </td>';
+		html += '<td style="text-align: center;"> (No venues yet) </td>';
 	}
 	
 	// if sample itinerary, have link go to sample-itinerary.html
