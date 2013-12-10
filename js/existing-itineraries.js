@@ -4,15 +4,19 @@
 var currentJSON = store.get('fourpeople');
 
 if(currentJSON == null) {
-	itineraries.forEach(function(itinerary){
-		$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
-	});
+	store.set('fourpeople', JSON.stringify(sampleItineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+	itineraries = JSON.parse(store.get('fourpeople'));
+	store.set('fourpeopleID', nextItineraryID);
 } else {
 	itineraries = JSON.parse(currentJSON);
-	itineraries.forEach(function(itinerary) {
-		$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
-	});
+	console.log(JSON.parse(store.get('fourpeople')));
+	nextItineraryID = parseInt(store.get('fourpeopleID'));
 }
+
+itineraries.forEach(function(itinerary) {
+	$("#current-itinerary-holder").append(buildItineraryDiv(itinerary));
+});
 
 function buildItineraryDiv(itinerary) {
 	var name = itinerary.name;

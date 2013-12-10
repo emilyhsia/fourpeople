@@ -6,15 +6,34 @@ var CLIENT_SECRET = "RPZTJ5NHBY0L213UKWP3T3DF2QVUXNKMW34FRJOUZFDIFNDM&v=20131124
 var cloudMadeAPIKey = '7da9717aa6e646c2b4d6a6a1fbc94765';
 
 //TODO: error check
-itineraries = JSON.parse(store.get('fourpeople'));
-console.log(itineraries);
-nextItineraryID = JSON.parse(store.get('fourpeopleID'));
+var currentJSON = store.get('fourpeople');
+
+if(currentJSON == null) {
+	store.set('fourpeople', JSON.stringify(sampleItineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+	itineraries = JSON.parse(store.get('fourpeople'));
+	store.set('fourpeopleID', nextItineraryID);
+} else {
+	itineraries = JSON.parse(currentJSON);
+	console.log(JSON.parse(store.get('fourpeople')));
+	nextItineraryID = parseInt(store.get('fourpeopleID'));
+}
 
 //get id from URL
 //split at & if multiple parameters passed; id must be first
 //TODO: make more robust
 var idEquals = location.search.split("&")[0];
 var itineraryID = parseInt(idEquals.split("=")[1]);
+
+//if sample itinerary, redirect to sample page (non-edit)
+if(itineraryID <= numSamples && location.href.indexOf("sample-itinerary.html") == -1 ) {
+	window.location.href = "sample-itinerary.html?id=" + itineraryID;
+}
+//if not sample itinerary and accidentally on sample page, redirect to regular 
+if(itineraryID > numSamples && location.href.indexOf("sample-itinerary.html") != -1 ) {
+	window.location.href = "itinerary.html?id=" + itineraryID;
+}
+
 var n = 0;
 var foundItinerary = false;
 var itinerary = null;
@@ -27,7 +46,7 @@ while(!foundItinerary && n < itineraries.length) {
 	n++;
 }
 
-// TODO
+// TODO: make it cooler
 if(!foundItinerary) {
 	var toDisplay = '<h1>Oops, this is embarrassing!</h1>' + 
 					'<h3>We could not find your itinerary.</h3>' + 

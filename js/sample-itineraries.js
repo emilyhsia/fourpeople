@@ -1,7 +1,8 @@
 // Dummy London itinerary
 var nextItineraryID = 3;
 var numSamples = 2;
-var itineraries = 
+var itineraries = sampleItineraries;
+var sampleItineraries = 
 [
 	{
 		name: "London",
