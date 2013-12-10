@@ -1,9 +1,17 @@
 /** JavaScript functionality for landing page */
 
-store.set('fourpeople', JSON.stringify(itineraries));
-console.log(JSON.parse(store.get('fourpeople')));
+var currentJSON = store.get('fourpeople');
 
-store.set('fourpeopleID', nextItineraryID);
+if(currentJSON == null) {
+	store.set('fourpeople', JSON.stringify(sampleItineraries));
+	console.log(JSON.parse(store.get('fourpeople')));
+	itineraries = JSON.parse(store.get('fourpeople'));
+	store.set('fourpeopleID', nextItineraryID);
+} else {
+	itineraries = JSON.parse(currentJSON);
+	console.log(JSON.parse(store.get('fourpeople')));
+	nextItineraryID = parseInt(store.get('fourpeopleID'));
+}
 
 // when user clicks create new itinerary, use input
 // as name and create new itinerary
