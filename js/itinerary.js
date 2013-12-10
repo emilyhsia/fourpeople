@@ -69,6 +69,9 @@ $('#itinerary-name').val(itinerary.name);
 $('#itinerary-name').hide();
 $('#save-itinerary-name').hide();
 $('#cancel-save-itinerary-name').hide();
+$('#confirm-delete-info').hide();
+$('#yes-delete-this-itinerary').hide();
+$('#no-cancel-this-delete').hide();
 
 // if click "edit name," show editing input/buttons
 $("#edit-itinerary-name").click(function(){
@@ -105,8 +108,41 @@ $('#save-itinerary-name').click(function() {
 	$('#delete-itinerary').show();
 });
 
+// if click "delete," make user confirm first
 $("#delete-itinerary").click(function() {
-	alert("Are you sure? (We can't do this yet anyway!)");
+	$('#edit-itinerary-name').hide();
+	$('#delete-itinerary').hide();
+	$('#confirm-delete-info').show();
+	$('#yes-delete-this-itinerary').show();
+	$('#no-cancel-this-delete').show();
+});
+
+// if click cancel, hide delete info
+$('#no-cancel-this-delete').click(function(){
+	$('#yes-delete-this-itinerary').hide();
+	$('#no-cancel-this-delete').hide();
+	$('#confirm-delete-info').hide();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+});
+
+// if click yes, delete, then delete itinerary and redirect to existing itineraries
+$('#yes-delete-this-itinerary').click(function(){
+	var i = 0;
+	var itineraryFound = false;
+	while(!itineraryFound) {
+		if(itineraries[i].id == itinerary.id) {
+			itineraryFound = true;
+		}
+		i++;
+	}
+	i--;
+	//remove venue from itinerary
+	itineraries.splice(i, 1);
+	store.set('fourpeople', JSON.stringify(itineraries));
+	
+	//redirect to existing itineraries
+	window.location.href = "existing-itineraries.html";
 });
 
 var formatVenueLookupURL = function(id) {
