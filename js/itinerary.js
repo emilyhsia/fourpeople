@@ -65,6 +65,9 @@ if(!foundItinerary) {
 //=============================================================================
 //=============================================================================
 
+//set printer button
+$("#printer-view-ahref").attr('href', 'printer-view.html?id='+itinerary.id);
+
 $('h1#itinerary-title span#itinerary-title-name').text(itinerary.name);
 $('h1#itinerary-title span#itinerary-title-id').text('(id: ' + itinerary.id + ')');
 $('#itinerary-name').val(itinerary.name);
@@ -474,11 +477,6 @@ function clearOldSearch() {
 	$("#add-venue-error-holder").css("display", "none");
 	$("#search-results").html(" ");
 }
-
-// TODO: printer-friendly itinerary version
-$("#printer-view").click(function(){
-	alert("Coming soon :)");
-});
 
 // Gathers parameters and sends search request to Foursquare API
 $("#search-for-venues").click(function() {
