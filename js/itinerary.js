@@ -610,6 +610,7 @@ function getNextAvailableTime() {
 	} else {
 		var now = new Date();
 		now.setMinutes(0);
+		now.setHours(now.getHours() + 1);
 		return now;
 	}
 }
@@ -753,6 +754,17 @@ function detectCollision(){
 					$("#tr-" + (itinerary.itinerary[i-1].id) + " .time").css("color", "#FF0000");
 				}
 			} 
+			if (currentStart >= beforeEnd){
+				console.log("COLLISIONTop");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","1px solid gray");
+				$("#tr-" + (itinerary.itinerary[i].id) + " .time").css("color", "#333333");
+
+				//if there is a collison on the second item, change the first one too
+				if (i == 1){
+					$("#tr-" +(itinerary.itinerary[i-1].id)).css("border-bottom","1px solid gray");
+					$("#tr-" + (itinerary.itinerary[i-1].id) + " .time").css("color", "#333333");
+				}
+			} 
 			if (currentEnd > afterStart){
 				console.log("COLLISIONBottom");
 				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
@@ -762,6 +774,17 @@ function detectCollision(){
 					if(i == itinerary.itinerary.length-2){
 						$("#tr-" +(itinerary.itinerary[i+1].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
 						$("#tr-" + (itinerary.itinerary[i+1].id) + " .time").css("color", "#FF0000");
+					}
+			}
+			if (currentEnd <= afterStart){
+				console.log("COLLISIONBottom");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid gray");
+				$("#tr-" + (itinerary.itinerary[i].id) + " .time").css("color", "#333333");
+
+					//if there is a collison at the 2nd to last item, change the last one too
+					if(i == itinerary.itinerary.length-2){
+						$("#tr-" +(itinerary.itinerary[i+1].id)).css("border-top","1px solid gray");
+						$("#tr-" + (itinerary.itinerary[i+1].id) + " .time").css("color", "#333333");
 					}
 			}
 
@@ -776,6 +799,17 @@ function detectCollision(){
 			$("#tr-" + (itinerary.itinerary[0].id) + " .time").css("color", "#FF0000");
 			$("#tr-" + (itinerary.itinerary[1].id) + " .time").css("color", "#FF0000");
 		}
+		if(secondStart >= firstEnd) {
+			console.log("COLLISIONSingle");
+			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","1px solid gray");
+			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","1px solid gray");
+			$("#tr-" + (itinerary.itinerary[0].id) + " .time").css("color", "#333333");
+			$("#tr-" + (itinerary.itinerary[1].id) + " .time").css("color", "#333333");
+		}
+	} else if(itinerary.itinerary.length == 1) {
+		$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","none");
+		$("#tr-" +(itinerary.itinerary[0].id)).css("border-top","1px solid gray");
+		$("#tr-" + (itinerary.itinerary[0].id) + " .time").css("color", "#333333");
 	}
 }
 
@@ -1003,8 +1037,19 @@ $(document).on('click', '.edit-venue', function(){
 				$(trChild).hide(600, function() {
 					var throwawayNode = tbody.removeChild(trChild);
 				});
-				storeItinerary();
 				
+				
+				storeItinerary();
+				detectCollision();
+				
+				if(i > 0){
+					$("#tr-" +(itinerary.itinerary[i-1].id)).css("border-bottom","1px solid gray");
+					$("#tr-" + (itinerary.itinerary[i-1].id) + " .time").css("color", "#333333");
+				} 
+				if(i < itinerary.itinerary.length) {
+					$("#tr-" +(itinerary.itinerary[i].id)).css("border-top","1px solid gray");
+					$("#tr-" + (itinerary.itinerary[i].id) + " .time").css("color", "#333333");
+				}
 			});
 
 				var throwawayNode = tbody.removeChild(trChild);
