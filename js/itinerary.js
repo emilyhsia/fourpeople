@@ -719,7 +719,7 @@ var sortAndDisplayItinerary = function(newVenue) {
 	$('#tr-' + newVenue.id).addClass('highlight-venue');
 	var top = $('#tr-' + newVenue.id).offset().top;
 	$('html, body').animate({
-        scrollTop: $('#tr-' + newVenue.id).offset().top
+        scrollTop: $('#tr-' + newVenue.id).offset().top - 50
     }, 1500);
 	setTimeout(function() {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
