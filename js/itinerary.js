@@ -706,7 +706,7 @@ function detectCollision(){
 			} 
 			if (currentEnd > afterStart){
 				console.log("COLLISIONBottom");
-				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
+				$("#tr-" +(itinerary.itinerary[i].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
 			}
 
 		}
@@ -715,8 +715,8 @@ function detectCollision(){
 		var secondStart = itinerary.itinerary[1].startDate;
 		if(secondStart < firstEnd) {
 			console.log("COLLISIONSingle");
-			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","1px solid rgba(255, 0, 0, .3)");
-			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","1px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[0].id)).css("border-bottom","5px solid rgba(255, 0, 0, .3)");
+			$("#tr-" +(itinerary.itinerary[1].id)).css("border-top","5px solid rgba(255, 0, 0, .3)");
 		}
 	}
 }
