@@ -47,12 +47,28 @@ $("#itinerary-name").keypress(function(e){
 // when user clicks search for itinerary, check input
 // and redirect accordingly
 $("#search-itinerary-by-id").click(function(){
-	var idNum = parseInt($("#search-id-input").val());
-	if(isNaN(idNum)) {
+
+	var inputInt = parseInt($("#search-id-input").val());
+	var inputStr = $("#search-id-input").val();
+	if(isNaN(inputInt) && inputStr == "") {
 		//TODO: display error
 		alert("The id must be a number");
 	}
 	else {
+		var idNum;
+		var allItineraries = JSON.parse(store.get('fourpeople'));
+		if (typeof inputInt == "number" && !isNaN(inputInt)) {
+			idNum = inputInt;
+			console.log('number');
+		} else {
+			allItineraries.forEach(function(itinerary) {
+				console.log(itinerary);
+				if (inputStr.toLowerCase() == itinerary.name.toLowerCase()) {
+					idNum = itinerary.id;
+				}
+			});
+		}
+		
 		window.location.href = "itinerary.html?id=" + idNum;
 	}
 });
