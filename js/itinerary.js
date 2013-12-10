@@ -237,17 +237,25 @@ var displayVenue = function(venue) {
 	var confirmDelete = $(document.createElement('div')).addClass('confirmDelete').html(confirmDeleteHTML);
 	var timeColumn = $(document.createElement('td')).addClass('time').append(timeDisplay).append(timeChange).append(confirmDelete);
 
-	// map - create and append the element to DOM before Leaflet loads it
-	var map = $(document.createElement('div')).addClass('mini-map').attr('id', 'map' + venue.id);
-	var mapEl = $(document.createElement('td')).append(map);
+	
 	
 	var editHTML = '<button class="btn btn-primary btn-sm" id="edit-' + venue.id + '">Edit</button>';
 	var editColumn = $(document.createElement('td')).addClass('edit-venue').html(editHTML);
 
 	// append the icon, venue info, time, and map columns to a row element
-	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueInfoColumn).append(timeColumn).append(mapEl).append(editColumn);
+	var row = $(document.getElementById('tr-' + venue.id)).append(iconColumn).append(venueInfoColumn).append(timeColumn).append(editColumn);
 
-	
+	$(row).on('mouseover', function() {
+		if ($('#add-venues-content').css('display') == 'none' && $('.timeChange').css('display') == 'none') {
+			$("#edit-" + venue.id).show();
+		}
+	});
+	$(row).on('mouseout', function() {
+		$("#edit-" + venue.id).hide();
+	});
+	$(row).on('click', function() {
+
+	});
 	// prepopulate date/time pickers with current values
 	$("#start-date-picker-" + venue.id).val(getCalendarString(venue.startDate));
 	$("#start-time-picker-" + venue.id).val(getInputTimeString(venue.startDate));
@@ -292,7 +300,7 @@ var _createCategoryIconColumn = function(category) {
 	var iconImg = document.createElement('img');
 	$(iconImg).attr("src", category.icon.prefix + "bg_88" + category.icon.suffix).addClass('img-circle');
 	var timeline = $(document.createElement('div')).addClass("timeline");
-	iconColumn.append(iconImg).append(timeline);
+	iconColumn.append(timeline).append(iconImg);
 	return iconColumn;
 }
 
@@ -327,7 +335,11 @@ var _createVenueInfoColumn = function(venue) {
 	var row = $(document.createElement('tr')).append(ratingColumn).append(addressCategoryColumn);
 	var ratingAddressCategoryTable = $(document.createElement('table')).append($(document.createElement('tbody')).append(row));
 	
-	var venueInfoColumn = $(document.createElement('td')).addClass('venue').append(name).append(ratingAddressCategoryTable);
+	// map - create and append the element to DOM before Leaflet loads it
+	var map = $(document.createElement('div')).addClass('mini-map').attr('id', 'map' + venue.id);
+	var mapEl = $(document.createElement('td')).append(map);
+
+	var venueInfoColumn = $(document.createElement('td')).addClass('venue').append(name).append(ratingAddressCategoryTable).append(map);
 	return venueInfoColumn;
 }
 
@@ -749,6 +761,7 @@ var createVenueObject = function(id, startDate, endDate) {
 
 //when "edit" button clicked, show edit areas for that venue
 $(document).on('click', '.edit-venue', function(){
+	$(this).hide();
 	//get id of venue clicked
 	var editIDfull = $(this).children('button').attr('id');
 	console.log("clicked " + editIDfull);
@@ -827,6 +840,7 @@ $(document).on('click', '.edit-venue', function(){
 		});
 	}
 });
+
 
 var saveVenueAndUpdateItinerary = function(venueObject) {
 	// Get the venue ID

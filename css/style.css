@@ -141,6 +141,13 @@ td.icon {
 	border: none!important;
 	border-top: 1px transparent solid!important;
 	position: relative;
+	vertical-align: top!important;
+}
+
+td.venue {
+	padding-top: 30px!important;
+	padding-bottom: 30px!important;
+	width: 450px;
 }
 
 .rating {
@@ -162,7 +169,7 @@ td.time {
 
 .mini-map {
 	height: 150px;
-	width: 150px;
+	width: 350px;
 }
 
 /* Itinerary build page */
@@ -288,6 +295,22 @@ td.time {
 	border-top: 1px solid #dddddd;
 }
 
+
+h4.list-group-item-heading {
+	font-style: normal;
+	font-size: 28px;
+}
+
+.edit-venue button{
+	display: none;
+}
+
+.container.wide {
+	width: 95%;
+}
+
+
 #sample-itinerary-table tbody td.edit-venue {
 	display: none;
 }
+
