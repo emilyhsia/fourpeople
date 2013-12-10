@@ -42,15 +42,41 @@
     <div id="main-contianer" class="container wide">
 	
 		<div id="itinerary-content" class="left">
+
+			<div class="itinerary-title-action-group">
 			<h1 id="itinerary-title"><span id="itinerary-title-name">Existing view here</span> &nbsp; <span id="itinerary-title-id"></span></h1>
-			<input type="text" class="landing form-control input-lg" placeholder="Itinerary name" id="itinerary-name" style="margin: 10px 0px;">
+			<!-- Single button -->
+			<div class="btn-group" id="itinerary-title-action-buttons">
+			  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			    <span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu">
+			    <li><a href="#" id="edit-itinerary-name">Change name</a></li>
+			    <li class="divider"></li>
+			    <li><a href="#" id="delete-itinerary" data-toggle="modal" data-target="#myModal">Delete Itinerary</a></li>
+			  </ul>
+			</div>
+		</div>
 			<button id="save-itinerary-name" class="btn btn-primary">Save name</button>
 			<button id="cancel-save-itinerary-name" class="btn btn-primary">Cancel</button>
-			<button id="edit-itinerary-name" class="btn btn-primary">Change name</button>
-			<p id="confirm-delete-info">Are you sure you want to delete this itinerary? This cannot be undone.</p>
-			<button id="yes-delete-this-itinerary" class="btn btn-danger">Yes, delete</button>
-			<button id="no-cancel-this-delete" class="btn btn-primary">No, cancel</button>
-			<button id="delete-itinerary" class="btn btn-danger">Delete itinerary</button>
+			<!--<button id="edit-itinerary-name" class="btn btn-primary">Change name</button>-->
+			<div class="modal fade" id="myModal">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			        <h4 class="modal-title list-group-item-heading">Careful!</h4>
+			      </div>
+			      <div class="modal-body">
+			        <p>Are you sure you want to delete this itinerary? This cannot be undone.</p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" id="yes-delete-this-itinerary" class="btn btn-default btn-danger" data-dismiss="modal">Yes, delete</button>
+			        <button type="button" id="no-cancel-this-delete" class="btn btn-primary btn-primary" data-dismiss="modal">No, cancel</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
 			<button id="show-add-venues" class="btn btn-primary right">Add venues</button>
 			<button id="hide-add-venues" class="btn btn-primary right">Done adding</button>
 			<button id="printer-view" class="btn btn-primary right">Printer view</button><br><br>

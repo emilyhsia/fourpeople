@@ -137,11 +137,12 @@ td {
 }
 
 td.icon {
-	width: 130px;
+	width: 130px!important;
 	border: none!important;
 	border-top: 1px transparent solid!important;
 	position: relative;
 	vertical-align: top!important;
+	text-align: center;
 }
 
 td.venue {
@@ -199,6 +200,25 @@ td.time {
 	margin: 0 auto;
 }
 
+.itinerary-title-action-group {
+	display: block;
+}
+
+.itinerary-title-action-group h1 {
+	display: inline-block;
+}
+
+.caret {
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #000000;
+}
+
+.itinerary-title-action-group button {
+	border: none;
+	margin-bottom: 15px;
+}
+
 .panel-text-info {
 	float: left;
 	width: 35%;
@@ -227,6 +247,11 @@ td.time {
 
 .hidden-venue-id {
 	display: none;
+}
+
+#delete-itinerary {
+	color: #d9534f;
+	font-weight: 600;
 }
 
 #itinerary-content {
@@ -284,7 +309,7 @@ td.time {
 	height: 100%;
 	position: absolute;
 	top: 0px;
-	left: 50px;
+	left: 80px;
 	z-index: -1;
 }
 
@@ -318,6 +343,7 @@ h4.list-group-item-heading {
 .tr-date {
 	height: 50px;
 	position: relative;
+	text-align: center;
 }
 
 .tr-date h4{
