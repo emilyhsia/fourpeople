@@ -139,20 +139,19 @@ $(document).on('click', '.copy-itinerary', function(){
 	nextItineraryID++;
 	store.set('fourpeopleID', nextItineraryID);
 	var venues = itinerary.itinerary;
-	var copy = $.extend(true, [], venues);
-	updateCopiedDates(copy);
+	//var copy = $.extend(true, [], venues);
+	//updateCopiedDates(copy);
 	
 
 	itineraries.push({
 		name: itineraryName,
 		id: itineraryID,
-		itinerary: copy
+		itinerary: venues
 	});
 	
 	store.set('fourpeople', JSON.stringify(itineraries));
-	console.log(JSON.parse(store.get('fourpeople')));
 		
-	//window.location.href = "itinerary.html?id=" + itineraryID;
+	window.location.href = "itinerary.html?id=" + itineraryID;
 });
 
 var updateCopiedDates = function(venues) {
