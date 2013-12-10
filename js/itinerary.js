@@ -63,9 +63,48 @@ if(!foundItinerary) {
 // Viewing current itinerary
 //=============================================================================
 //=============================================================================
+
+$('h1#itinerary-title').text(itinerary.name);
+$('#itinerary-name').val(itinerary.name);
+$('#itinerary-name').hide();
+$('#save-itinerary-name').hide();
+$('#cancel-save-itinerary-name').hide();
+
+// if click "edit name," show editing input/buttons
 $("#edit-itinerary-name").click(function(){
-	alert("Coming soon! :)");
+	$('h1#itinerary-title').hide();
+	$('#edit-itinerary-name').hide();
+	$('#delete-itinerary').hide();
+	$('#itinerary-name').val(itinerary.name);
+	$('#itinerary-name').show();
+	$('#save-itinerary-name').show();
+	$('#cancel-save-itinerary-name').show();
 });
+
+// if cancel name edit, hide editing input/buttons 
+$('#cancel-save-itinerary-name').click(function() {	
+	$('#itinerary-name').hide();
+	$('#save-itinerary-name').hide();
+	$('#cancel-save-itinerary-name').hide();
+	$('h1#itinerary-title').show();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+
+});
+
+// if save name edit, hide editing input/buttons,
+// save input as name, and update name h1
+$('#save-itinerary-name').click(function() {
+	$('#itinerary-name').hide();
+	$('#save-itinerary-name').hide();
+	$('#cancel-save-itinerary-name').hide();
+	itinerary.name = $('#itinerary-name').val();
+	$('h1#itinerary-title').html(itinerary.name);
+	$('h1#itinerary-title').show();
+	$('#edit-itinerary-name').show();
+	$('#delete-itinerary').show();
+});
+
 $("#delete-itinerary").click(function() {
 	alert("Are you sure? (We can't do this yet anyway!)");
 });
@@ -93,7 +132,6 @@ var lookupFoursquareVenue = function(venueObject, callback) {
 	});
 }
 
-$('h1#itinerary-title').text(itinerary.name);
 
 /* 
  * Displays a single venue. The venue param is the a venue Object with the injected Foursquare venue
