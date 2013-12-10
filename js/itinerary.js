@@ -47,6 +47,7 @@ while(!foundItinerary && n < itineraries.length) {
 	}
 	n++;
 }
+n--;
 
 // TODO: make this error message cooler
 if(!foundItinerary) {
@@ -106,6 +107,9 @@ $('#save-itinerary-name').click(function() {
 	$('h1#itinerary-title').show();
 	$('#edit-itinerary-name').show();
 	$('#delete-itinerary').show();
+	
+	// store new itinerary name
+	storeItinerary();
 });
 
 // if click "delete," make user confirm first
@@ -651,7 +655,11 @@ var sortAndDisplayItinerary = function(newVenue) {
 		$('#tr-' + newVenue.id).removeClass('highlight-venue');
 	}, 600);
 
+	//see if any time overlaps
 	detectCollision();
+	
+	// store new itinerary
+	storeItinerary();
 }
 
 function detectCollision(){
@@ -678,6 +686,16 @@ function detectCollision(){
 		}
 
 	}
+}
+
+/* Strips the venue info out of itinerary (leaving only id, startDate, endDate)
+ * and store just that for efficiency purposes since API calls get venue info anyway
+ * TODO: actually strip venue information
+ */
+function storeItinerary() {
+	itineraries[n] = itinerary;
+	store.set('fourpeople', JSON.stringify(itineraries));
+	console.log(itineraries);
 }
 
 /*
@@ -826,7 +844,11 @@ $(document).on('click', '.edit-venue', function(){
 				var tbody = document.getElementById("venue-table-tbody");
 				var trChild = document.getElementById("tr-" + thisVenue.id);
 				var throwawayNode = tbody.removeChild(trChild);
-			});
+				
+				//store new itinerary
+				storeItinerary();
+			});	
+			
 		});
 		
 		//when click "done" hide editing areas and show edit button, new time
