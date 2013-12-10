@@ -7,15 +7,19 @@ body {
 /* Landing */
 
 body.landing {
-	background-image: url('../images/New-York-City-Skyline.jpg');
-	background-size: 100%;
+	background: url('../images/New-York-City-Skyline.jpg') no-repeat center center fixed;
+	/*background-size: 100%;*/
+	-webkit-background-size: cover;
+	  -moz-background-size: cover;
+	  -o-background-size: cover;
+	  background-size: cover;
 }
 
 .white-container {
-	font-family: 'Alegreya Sans SC', sans-serif;
-	background-color: rgba(255, 255, 255, 0.5);
+	/*font-family: 'Alegreya Sans SC', sans-serif;*/
+	background-color: rgba(255, 255, 255, 0.8);
 	width: 95%;
-	height: 450px;
+	height: 250px;
 	margin-left: auto;
 	margin-right: auto;
 	border-radius: 15px;
@@ -27,7 +31,7 @@ div.tagline {
 }
 
 .tagline h1 {
-	font-family: 'Varela Round', sans-serif;
+	/*font-family: 'Varela Round', sans-serif;*/
 	text-shadow: black 3px 2px 4px;
 	text-align: center;
 	text-transform: uppercase;
@@ -38,7 +42,7 @@ div.tagline {
 }
 
 .tagline h2 {
-	font-family: 'Alegreya Sans SC', sans-serif;
+	/*font-family: 'Alegreya Sans SC', sans-serif;*/
 	text-align: center;
 	font-size: 28px;
 	font-style: italic;
@@ -51,7 +55,7 @@ div.tagline {
 }
 .landing div.left{
 	padding-left: 40px;
-	height: 300px;
+	height: 125px;
 	border-right: 1px solid black;
 	padding-right: 10px;
 }
@@ -83,9 +87,15 @@ button {
 	font-size: 18px;
 }
 .landing h3, h4 {
-	font-family: 'Alegreya Sans SC', sans-serif;
+	/*font-family: 'Alegreya Sans SC', sans-serif;*/
 	font-style: italic;
 	font-weight: bold;
+}
+#learn-more {
+	color: white;
+}
+#learn-more:hover {
+	color: #dedede;
 }
 
 footer {
@@ -192,7 +202,7 @@ td.time {
 }
 
 .one-third {
-	width: 35%;
+	width: 33%;
 }
 
 #error-holder {
