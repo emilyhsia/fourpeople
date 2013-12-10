@@ -314,6 +314,17 @@ h4.list-group-item-heading {
 	display: none;
 }
 
+
+.tr-date {
+	height: 50px;
+	position: relative;
+}
+
+.tr-date h4{
+	font-size: 20px;
+}
+
+
 .about {
 	margin-left: auto;
 	margin-right: auto;
@@ -326,3 +337,4 @@ h4.list-group-item-heading {
 	font-size: 22px;
 	color: #969696;
 }
+
