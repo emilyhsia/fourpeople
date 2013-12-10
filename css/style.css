@@ -386,7 +386,17 @@ h4.list-group-item-heading {
 
 
 @media (max-width: 1024px) {
-	#itinerary-content {
-		
+	#add-venues-content{
+		width: 40%;
+	}
+	#search-results table img {
+		height: 40px;
+	}
+	.panel-map {
+		height: 100px;
+		width: 100px;
+	}
+	.mini-map {
+		width: 200px;
 	}
 }
