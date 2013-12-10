@@ -71,13 +71,12 @@ $('#itinerary-name').hide();
 $('#save-itinerary-name').hide();
 $('#cancel-save-itinerary-name').hide();
 $('#confirm-delete-info').hide();
-$('#yes-delete-this-itinerary').hide();
-$('#no-cancel-this-delete').hide();
 
 // if click "edit name," show editing input/buttons
 $("#edit-itinerary-name").click(function(){
 	$('h1#itinerary-title').hide();
 	$('#edit-itinerary-name').hide();
+	$('#itinerary-title-action-buttons').hide();
 	$('#delete-itinerary').hide();
 	$('#itinerary-name').val(itinerary.name);
 	$('#itinerary-name').show();
@@ -89,6 +88,7 @@ $("#edit-itinerary-name").click(function(){
 $('#cancel-save-itinerary-name').click(function() {	
 	$('#itinerary-name').hide();
 	$('#save-itinerary-name').hide();
+	$('#itinerary-title-action-buttons').show();
 	$('#cancel-save-itinerary-name').hide();
 	$('h1#itinerary-title').show();
 	$('#edit-itinerary-name').show();
@@ -102,6 +102,7 @@ $('#save-itinerary-name').click(function() {
 	$('#itinerary-name').hide();
 	$('#save-itinerary-name').hide();
 	$('#cancel-save-itinerary-name').hide();
+	$('#itinerary-title-action-buttons').show();
 	itinerary.name = $('#itinerary-name').val();
 	$('h1#itinerary-title').html(itinerary.name);
 	$('h1#itinerary-title').show();
@@ -338,11 +339,13 @@ var _createVenueInfoColumn = function(venue) {
 	// address & category
 	var addressText = $(document.createElement('p')).text(venue.venue.location.address).css("margin-bottom", "0px");
 	var categoryText;
+	var categoryText = $(document.createElement('p')).html(venue.venue.category.shortName);
+	/*
 	if(venue.venue.category != null) { 
 		$(document.createElement('p')).text(venue.venue.category.shortName);
 	} else {
 		$(document.createElement('p')).text("(No category)");
-	}
+	}*/
 	var addressCategoryDiv = $(document.createElement('div')).addClass('info').append(addressText).append(categoryText);
 	var addressCategoryColumn = $(document.createElement('td')).append(addressCategoryDiv);
 	// rating and venue info table
@@ -417,9 +420,10 @@ function displayAllVenues() {
 // Hide adding venues div at first
 $("#add-venues-content").hide();
 
-var durLength = 400;
-// When click "Add venues," show search sidebar
-$("#show-add-venues").click(function() {
+var showAddVenuesPanel = function() {
+	$('.timeChange').css('display', 'none');
+	console.log('showing');
+
 	//$('.timeChange').hide();
 	//$('.timeDisplay').show();
 	$("#itinerary-content").animate({
@@ -427,7 +431,7 @@ $("#show-add-venues").click(function() {
     }, { duration: durLength, queue: false });
     $("#add-venues-content").show({
 		effect: "slide",
-		duration: durLength,
+		duration: 400,
 		queue: false,
 		direction: "right"
 	});
@@ -435,7 +439,11 @@ $("#show-add-venues").click(function() {
 	$("#hide-add-venues").show();
 	$("#show-add-venues").hide();
 	$(".edit-venue").hide();
-});
+}
+
+var durLength = 400;
+// When click "Add venues," show search sidebar
+$("#show-add-venues").click(showAddVenuesPanel);
 
 // When click "Done adding," hide search sidebar
 $("#hide-add-venues").click(function() {
@@ -536,6 +544,11 @@ $("#location").keypress(function(e){
 		$("#search-for-venues").click();
 	}
 });
+$('#itinerary-name').keypress(function(e) {
+	if(e.which == 13) {
+		$("#save-itinerary-name").click();
+	}
+});
 
 // Displays results for user
 function showResults(venues) {
@@ -607,8 +620,8 @@ function getNextAvailableTime() {
 
 // Builds the panel for a single search result
 function buildResultPanel(number, name, address, id, category) {
-	var category = [];
-	var icon = "";
+	//var category = [];
+	//var icon = "";
 	if(category.icon != null) {
 		icon = category.icon.prefix + "bg_88" + category.icon.suffix;
 	} else {
@@ -790,7 +803,6 @@ $(document).on('click', '.panel-add-button', function(){
 	// id="start-date-picker-result-" + number
 	var startDate = $('#start-date-picker-result-' + resultNo).val();
 	var startTime = $('#start-time-picker-result-' + resultNo).val();
-	console.log(startDate + " time: " + startTime);
 	var endDate = $('#end-date-picker-result-' + resultNo).val();
 	var endTime = $('#end-time-picker-result-' + resultNo).val();
 	var startDateString = createDateString(startDate, startTime).toString();
@@ -950,13 +962,13 @@ $(document).on('click', '.edit-venue', function(){
 				//remove venue from display
 				var tbody = document.getElementById("venue-table-tbody");
 				var trChild = document.getElementById("tr-" + thisVenue.id);
-<<<<<<< HEAD
+
 				$(trChild).hide(600, function() {
 					var throwawayNode = tbody.removeChild(trChild);
 				});
 				
 			});
-=======
+
 				var throwawayNode = tbody.removeChild(trChild);
 				
 				//store new itinerary
@@ -965,10 +977,10 @@ $(document).on('click', '.edit-venue', function(){
 				if(itinerary.itinerary.length == 0) {
 					$("#no-venues-error").show();
 				}
-			});	
+
+		});	
 			
->>>>>>> 4789744c0d9d2a906c6f7ca630f5ea1abb562572
-		});
+
 		
 		//when click "done" hide editing areas and show edit button, new time
 		$("#done-" + thisVenue.id).click(function(){
@@ -980,7 +992,6 @@ $(document).on('click', '.edit-venue', function(){
 			var endTimePickerID = '#end-time-picker-' + venueID;
 			var startDateString = getDateTimeInput(startDatePickerID, startTimePickerID);
 			var endDateString = getDateTimeInput(endDatePickerID, endTimePickerID);
-			console.log(startDateString + " " + endDateString);
 			var message = detectDateTimeStatus(startDateString, endDateString);
 			// If we detected an error, display the error message and don't take any action
 			if (message != "Venue added!") {
@@ -1024,7 +1035,6 @@ var saveVenueAndUpdateItinerary = function(venueObject) {
 	// Save the new start and end times to that same venueObject
 	venueObject.startDate = startDateString;
 	venueObject.endDate = endDateString;
-	console.log(venueObject.startDate + " end: " + venueObject.endDate);
 	// Lookup the Foursquare venue and re-sort and display itinerary
 	lookupFoursquareVenue(venueObject, sortAndDisplayItinerary);
 	
