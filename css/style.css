@@ -12,6 +12,7 @@ body.landing {
 }
 
 .white-container {
+	font-family: 'Alegreya Sans SC', sans-serif;
 	background-color: rgba(255, 255, 255, 0.5);
 	width: 95%;
 	height: 450px;
@@ -26,15 +27,18 @@ div.tagline {
 }
 
 .tagline h1 {
+	font-family: 'Varela Round', sans-serif;
+	text-shadow: black 3px 2px 4px;
 	text-align: center;
 	text-transform: uppercase;
 	font-weight: 500;
 	font-size: 60px;
 	letter-spacing: 4px;
-	color: black;
+	color: white;
 }
 
 .tagline h2 {
+	font-family: 'Alegreya Sans SC', sans-serif;
 	text-align: center;
 	font-size: 28px;
 	font-style: italic;
@@ -79,6 +83,7 @@ button {
 	font-size: 18px;
 }
 .landing h3, h4 {
+	font-family: 'Alegreya Sans SC', sans-serif;
 	font-style: italic;
 	font-weight: bold;
 }
